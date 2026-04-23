@@ -1,0 +1,60 @@
+{
+  "skill": {
+    "name": "design-automation",
+    "version": "1.0.0",
+    "description": "Framework unificado para automação de designs",
+    "author": "Claude",
+    "license": "MIT"
+  },
+  "postercraft": {
+    "enabled": true,
+    "model": "FLUX.1-dev",
+    "default_steps": 28,
+    "default_guidance": 3.5,
+    "max_steps": 50,
+    "timeout_seconds": 300
+  },
+  "canva": {
+    "enabled": true,
+    "api_version": "v1",
+    "base_url": "https://api.canva.com/v1",
+    "scopes": [
+      "design:content:read",
+      "design:content:write",
+      "asset:read",
+      "asset:write"
+    ],
+    "require_credentials": true
+  },
+  "export": {
+    "enabled": true,
+    "supported_formats": ["png", "pdf", "svg", "webp"],
+    "default_quality": "high",
+    "default_dpi": 300,
+    "compression_level": 8
+  },
+  "versioning": {
+    "enabled": true,
+    "max_versions_per_design": 50,
+    "auto_cleanup": true,
+    "cleanup_after_days": 90
+  },
+  "templates": {
+    "enabled": true,
+    "library_path": "./template_library",
+    "auto_backup": true,
+    "backup_frequency": "daily"
+  },
+  "features": {
+    "batch_processing": true,
+    "multi_format_export": true,
+    "template_management": true,
+    "version_control": true,
+    "future_features": {
+      "comments_annotations": false,
+      "publish_scheduling": false,
+      "image_database_integration": false,
+      "performance_analytics": false
+    }
+  }
+}

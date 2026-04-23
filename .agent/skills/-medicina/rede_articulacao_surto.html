@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rede de Articulação no Surto de DTA</title>
+<style>
+  :root {
+    --bg-page: #eef7f2;
+    --text-main: #1f3b2b;
+    --box-purple-bg: #f2eefa; --box-purple-border: #534ab7;
+    --box-orange-bg: #fdf2e3; --box-orange-border: #d48e3a;
+    --box-pink-bg: #fcebeb; --box-pink-border: #d65a5a;
+    --box-green-bg: #e4f3eb; --box-green-border: #2e8b57;
+    --arrow-color: #557b6d;
+  }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-page);
+    color: var(--text-main);
+    margin: 0;
+    padding: 30px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .container {
+    max-width: 900px;
+    width: 100%;
+  }
+
+  .header-meta {
+    font-size: 13px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    color: #4a6c5f;
+  }
+
+  .title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 30px;
+    color: var(--text-main);
+  }
+
+  .svg-container {
+    width: 100%;
+    margin-bottom: 30px;
+    overflow: visible;
+  }
+
+  .description-box {
+    background-color: transparent;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #2c4a3b;
+    border-top: none;
+  }
+
+  .tooltip {
+    position: absolute; background: rgba(25, 45, 35, 0.95); color: white;
+    padding: 12px 16px; border-radius: 8px; font-size: 14px; max-width: 250px;
+    pointer-events: none; opacity: 0; transition: opacity 0.2s ease, transform 0.2s ease;
+    transform: translateY(10px); z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    line-height: 1.4;
+  }
+  .tooltip.show { opacity: 1; transform: translateY(0); }
+
+  .node { cursor: pointer; transition: filter 0.2s; }
+  .node:hover { filter: brightness(0.95); }
+  .node:hover rect { stroke-width: 2px; }
+
+  .controls { display: flex; gap: 15px; margin-bottom: 30px; }
+  .btn {
+    background: white; border: 1px solid var(--arrow-color); color: var(--text-main);
+    padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 500;
+    transition: all 0.2s;
+  }
+  .btn:hover { background: var(--arrow-color); color: white; }
+  .slide { display: none; animation: fadeIn 0.4s ease; }
+  .slide.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="controls">
+    <button class="btn" onclick="prevSlide()">Anterior</button>
+    <button class="btn" onclick="nextSlide()">Próximo</button>
+  </div>
+
+  <!-- Slide 1 -->
+  <div class="slide active" id="slide-1">
+    <div class="header-meta">1 DE 4</div>
+    <div class="title">A Porta de Entrada (USF / APS)</div>
+    <div class="svg-container">
+      <svg width="100%" viewBox="0 0 800 250">
+        <defs>
+          <marker id="ar1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0 1L8 5L0 9" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+
+        <path d="M 230 125 L 320 125" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#ar1)"/>
+        <path d="M 530 125 L 610 125" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#ar1)"/>
+
+        <g class="node" data-tooltip="É onde o paciente vai primeiro. A Unidade de Saúde da Família (USF) capta o surto inicial.">
+          <rect x="30" y="90" width="200" height="70" rx="8" fill="var(--box-green-bg)" stroke="var(--box-green-border)" stroke-width="1"/>
+          <text x="130" y="115" font-family="sans-serif" font-size="16" font-weight="bold" fill="var(--box-green-border)" text-anchor="middle">USF (Posto de Saúde)</text>
+          <text x="130" y="135" font-family="sans-serif" font-size="13" fill="#666" text-anchor="middle">Identificação do Cluster</text>
+        </g>
+
+        <g class="node" data-tooltip="A USF resolve os casos leves (TRO) na própria unidade, desativando o risco de morte na maioria dos pacientes.">
+          <rect x="330" y="90" width="200" height="70" rx="8" fill="var(--box-purple-bg)" stroke="var(--box-purple-border)" stroke-width="1"/>
+          <text x="430" y="115" font-family="sans-serif" font-size="16" font-weight="bold" fill="var(--box-purple-border)" text-anchor="middle">Manejo Leve/Moderado</text>
+          <text x="430" y="135" font-family="sans-serif" font-size="13" fill="#666" text-anchor="middle">Hidratação Oral (TRO)</text>
+        </g>
+
+        <g class="node" data-tooltip="A USF age como um filtro regulador: retém os fáceis e encaminha os graves ao Pronto-Atendimento.">
+          <rect x="620" y="90" width="160" height="70" rx="8" fill="var(--box-orange-bg)" stroke="var(--box-orange-border)" stroke-width="1"/>
+          <text x="700" y="115" font-family="sans-serif" font-size="15" font-weight="bold" fill="var(--box-orange-border)" text-anchor="middle">Filtro de Gravidade</text>
+          <text x="700" y="135" font-family="sans-serif" font-size="12" fill="#888" text-anchor="middle">Acionamento da Regulação</text>
+        </g>
+      </svg>
+    </div>
+    <div class="description-box">
+      A <strong>Unidade de Saúde da Família (USF)</strong> funciona como o sensor de alerta precoce e o primeiro filtro do sistema. Ela absorve a maior parte dos pacientes (leves e moderados), evitando que os hospitais entrem em colapso, e organiza a fila para a regulação dos casos graves.
+    </div>
+  </div>
+
+  <!-- Slide 2 -->
+  <div class="slide" id="slide-2">
+    <div class="header-meta">2 DE 4</div>
+    <div class="title">Retaguarda Hospitalar (Pronto-Atendimento)</div>
+    <div class="svg-container">
+      <svg width="100%" viewBox="0 0 800 250">
+        <defs>
+          <marker id="ar2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0 1L8 5L0 9" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+
+        <path d="M 230 125 L 320 125" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#ar2)"/>
+        <path d="M 530 125 L 610 125" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#ar2)"/>
+
+        <g class="node" data-tooltip="Pacientes com vômitos intratáveis ou sinais de choque são enviados ao Pronto-Atendimento (PA/UPA).">
+          <rect x="30" y="90" width="200" height="70" rx="8" fill="var(--box-pink-bg)" stroke="var(--box-pink-border)" stroke-width="1"/>
+          <text x="130" y="115" font-family="sans-serif" font-size="16" font-weight="bold" fill="var(--box-pink-border)" text-anchor="middle">Casos Graves (Referência)</text>
+          <text x="130" y="135" font-family="sans-serif" font-size="13" fill="#666" text-anchor="middle">Desidratação Severa</text>
+        </g>
+
+        <g class="node" data-tooltip="O PA oferece o que a USF não pode: acesso venoso central, volumes imensos de fluido e reanimação cardiovascular se necessário.">
+          <rect x="330" y="90" width="200" height="70" rx="8" fill="var(--box-purple-bg)" stroke="var(--box-purple-border)" stroke-width="1"/>
+          <text x="430" y="115" font-family="sans-serif" font-size="16" font-weight="bold" fill="var(--box-purple-border)" text-anchor="middle">Pronto-Atendimento (PA)</text>
+          <text x="430" y="135" font-family="sans-serif" font-size="13" fill="#666" text-anchor="middle">Terapia Intravenosa</text>
+        </g>
+
+        <g class="node" data-tooltip="Uma vez estabilizado, o paciente recebe alta do PA, com uma carta de contra-referência para a sua USF de origem.">
+          <rect x="620" y="90" width="160" height="70" rx="8" fill="var(--box-green-bg)" stroke="var(--box-green-border)" stroke-width="1"/>
+          <text x="700" y="115" font-family="sans-serif" font-size="15" font-weight="bold" fill="var(--box-green-border)" text-anchor="middle">Contra-Referência</text>
+          <text x="700" y="135" font-family="sans-serif" font-size="12" fill="#888" text-anchor="middle">Devolve para a APS</text>
+        </g>
+      </svg>
+    </div>
+    <div class="description-box">
+      A articulação com o <strong>Pronto-Atendimento (PA)</strong> garante a retaguarda de alta complexidade. Quando a USF se depara com um paciente refratário ao tratamento ambulatorial (como o Luiz antes da medicação IV), o PA atua como o bote salva-vidas, estabilizando e devolvendo o paciente para o seguimento na sua comunidade.
+    </div>
+  </div>
+
+  <!-- Slide 3 -->
+  <div class="slide" id="slide-3">
+    <div class="header-meta">3 DE 4</div>
+    <div class="title">Inteligência Epidemiológica (Vigilância)</div>
+    <div class="svg-container">
+      <svg width="100%" viewBox="0 0 800 250">
+        <defs>
+          <marker id="ar3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0 1L8 5L0 9" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+
+        <path d="M 230 125 L 320 125" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#ar3)"/>
+        <path d="M 530 125 L 610 125" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#ar3)"/>
+
+        <g class="node" data-tooltip="A USF notifica o surto atípico imediatamente. Isso aciona os fiscais e epidemiologistas.">
+          <rect x="30" y="90" width="200" height="70" rx="8" fill="var(--box-orange-bg)" stroke="var(--box-orange-border)" stroke-width="1"/>
+          <text x="130" y="115" font-family="sans-serif" font-size="16" font-weight="bold" fill="var(--box-orange-border)" text-anchor="middle">Alarme da USF</text>
+          <text x="130" y="135" font-family="sans-serif" font-size="13" fill="#666" text-anchor="middle">Notificação Compulsória</text>
+        </g>
+
+        <g class="node" data-tooltip="Vigilância Sanitária avalia a festa/evento, confisca alimentos e envia para laboratório central (LACEN).">
+          <rect x="330" y="90" width="200" height="70" rx="8" fill="var(--box-pink-bg)" stroke="var(--box-pink-border)" stroke-width="1"/>
+          <text x="430" y="115" font-family="sans-serif" font-size="16" font-weight="bold" fill="var(--box-pink-border)" text-anchor="middle">Vigilância em Saúde</text>
+          <text x="430" y="135" font-family="sans-serif" font-size="13" fill="#666" text-anchor="middle">Investigação Ambiental</text>
+        </g>
+
+        <g class="node" data-tooltip="A Vigilância descobre qual bactéria causou o surto (ex: S. aureus) e informa toda a rede de saúde.">
+          <rect x="620" y="90" width="160" height="70" rx="8" fill="var(--box-purple-bg)" stroke="var(--box-purple-border)" stroke-width="1"/>
+          <text x="700" y="115" font-family="sans-serif" font-size="15" font-weight="bold" fill="var(--box-purple-border)" text-anchor="middle">Retorno Informativo</text>
+          <text x="700" y="135" font-family="sans-serif" font-size="12" fill="#888" text-anchor="middle">Emissão de Boletim</text>
+        </g>
+      </svg>
+    </div>
+    <div class="description-box">
+      A <strong>Vigilância (Epidemiológica e Sanitária)</strong> não trata doentes; ela trata a cidade. Ao ser notificada pela USF, a Vigilância vai a campo bloquear a fonte de infecção e mapear se a culpa foi de uma bactéria específica. Essa informação é vital para impedir que o surto cresça.
+    </div>
+  </div>
+
+  <!-- Slide 4 -->
+  <div class="slide" id="slide-4">
+    <div class="header-meta">4 DE 4</div>
+    <div class="title">Continuidade (Fechando o Ciclo)</div>
+    <div class="svg-container">
+      <svg width="100%" viewBox="0 0 800 250">
+        <defs>
+          <marker id="ar4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0 1L8 5L0 9" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+
+        <path d="M 230 65 L 320 65" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#ar4)"/>
+        <path d="M 530 65 L 610 65" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#ar4)"/>
+        <path d="M 690 110 L 690 185 L 130 185 L 130 110" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#ar4)"/>
+
+        <g class="node" data-tooltip="O Pronto-Atendimento avisa a USF que Luiz recebeu alta, para que o ACS faça a visita de acompanhamento.">
+          <rect x="30" y="30" width="200" height="70" rx="8" fill="var(--box-green-bg)" stroke="var(--box-green-border)" stroke-width="1"/>
+          <text x="130" y="55" font-family="sans-serif" font-size="16" font-weight="bold" fill="var(--box-green-border)" text-anchor="middle">Alta e Retorno</text>
+          <text x="130" y="75" font-family="sans-serif" font-size="13" fill="#666" text-anchor="middle">Monitoramento Domiciliar (ACS)</text>
+        </g>
+
+        <g class="node" data-tooltip="A Vigilância emite o boletim final com as causas do surto para capacitar a rede e evitar repetições.">
+          <rect x="330" y="30" width="200" height="70" rx="8" fill="var(--box-pink-bg)" stroke="var(--box-pink-border)" stroke-width="1"/>
+          <text x="430" y="55" font-family="sans-serif" font-size="16" font-weight="bold" fill="var(--box-pink-border)" text-anchor="middle">Apoio Matricial</text>
+          <text x="430" y="75" font-family="sans-serif" font-size="13" fill="#888" text-anchor="middle">Resultados da Vigilância</text>
+        </g>
+
+        <g class="node" data-tooltip="A USF coordena as ações de educação em saúde contínuas na comunidade.">
+          <rect x="610" y="30" width="160" height="70" rx="8" fill="var(--box-orange-bg)" stroke="var(--box-orange-border)" stroke-width="1"/>
+          <text x="690" y="55" font-family="sans-serif" font-size="16" font-weight="bold" fill="var(--box-orange-border)" text-anchor="middle">Prevenção Futura</text>
+          <text x="690" y="75" font-family="sans-serif" font-size="13" fill="#888" text-anchor="middle">Educação Sanitária Constante</text>
+        </g>
+      </svg>
+    </div>
+    <div class="description-box">
+      A verdadeira continuidade do cuidado acontece quando o ciclo se fecha (Sistema de <strong>Referência e Contra-Referência</strong>). O PA salva a vida no quadro agudo, a Vigilância descobre o causador para defender a cidade, e tudo isso retorna para a USF, que usa essa informação para monitorar a recuperação completa de Luiz e educar os moradores para as próximas festas.
+    </div>
+  </div>
+
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+  let currentSlide = 1;
+  const totalSlides = 4;
+  function updateSlides() {
+    for (let i = 1; i <= totalSlides; i++) {
+      const slide = document.getElementById('slide-' + i);
+      if (i === currentSlide) slide.classList.add('active');
+      else slide.classList.remove('active');
+    }
+  }
+  function nextSlide() { currentSlide = currentSlide < totalSlides ? currentSlide + 1 : 1; updateSlides(); }
+  function prevSlide() { currentSlide = currentSlide > 1 ? currentSlide - 1 : totalSlides; updateSlides(); }
+
+  const tooltip = document.getElementById('tooltip');
+  document.querySelectorAll('.node').forEach(node => {
+    node.addEventListener('mousemove', (e) => {
+      const text = node.getAttribute('data-tooltip');
+      if (text) {
+        tooltip.textContent = text; tooltip.classList.add('show');
+        let x = e.pageX + 15; let y = e.pageY + 15;
+        const rect = tooltip.getBoundingClientRect();
+        if (x + rect.width > window.innerWidth) x = e.pageX - rect.width - 10;
+        tooltip.style.left = x + 'px'; tooltip.style.top = y + 'px';
+      }
+    });
+    node.addEventListener('mouseleave', () => tooltip.classList.remove('show'));
+  });
+</script>
+
+</body>
+</html>

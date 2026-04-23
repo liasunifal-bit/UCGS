@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mecanismo - Ação Antiemética (Ondansetrona)</title>
+<style>
+  :root {
+    --bg-page: #eef7f2;
+    --text-main: #1f3b2b;
+    --box-purple-bg: #f2eefa; --box-purple-border: #534ab7;
+    --box-orange-bg: #fdf2e3; --box-orange-border: #d48e3a;
+    --box-pink-bg: #fcebeb; --box-pink-border: #d65a5a;
+    --box-green-bg: #e4f3eb; --box-green-border: #2e8b57;
+    --arrow-color: #557b6d;
+  }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-page);
+    color: var(--text-main);
+    margin: 0;
+    padding: 30px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .container {
+    max-width: 900px;
+    width: 100%;
+  }
+
+  .header-meta {
+    font-size: 13px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    color: #4a6c5f;
+  }
+
+  .title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 30px;
+    color: var(--text-main);
+  }
+
+  .svg-container {
+    width: 100%;
+    margin-bottom: 30px;
+    overflow: visible;
+  }
+
+  .description-box {
+    background-color: transparent;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #2c4a3b;
+    border-top: none;
+  }
+
+  .tooltip {
+    position: absolute; background: rgba(25, 45, 35, 0.95); color: white;
+    padding: 12px 16px; border-radius: 8px; font-size: 14px; max-width: 250px;
+    pointer-events: none; opacity: 0; transition: opacity 0.2s ease, transform 0.2s ease;
+    transform: translateY(10px); z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    line-height: 1.4;
+  }
+  .tooltip.show { opacity: 1; transform: translateY(0); }
+
+  .node { cursor: pointer; transition: filter 0.2s; }
+  .node:hover { filter: brightness(0.95); }
+  .node:hover rect { stroke-width: 2px; }
+
+  .controls { display: flex; gap: 15px; margin-bottom: 30px; }
+  .btn {
+    background: white; border: 1px solid var(--arrow-color); color: var(--text-main);
+    padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 500;
+    transition: all 0.2s;
+  }
+  .btn:hover { background: var(--arrow-color); color: white; }
+  .slide { display: none; animation: fadeIn 0.4s ease; }
+  .slide.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="controls">
+    <button class="btn" onclick="prevSlide()">Anterior</button>
+    <button class="btn" onclick="nextSlide()">Próximo</button>
+  </div>
+
+  <!-- Slide 1 -->
+  <div class="slide active" id="slide-1">
+    <div class="header-meta">1 DE 3</div>
+    <div class="title">Estímulo Emético (Ação da Toxina)</div>
+    <div class="svg-container">
+      <svg width="100%" viewBox="0 0 800 250">
+        <defs>
+          <marker id="ar1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0 1L8 5L0 9" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+
+        <path d="M 230 125 L 320 125" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#ar1)"/>
+        <path d="M 530 125 L 610 125" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#ar1)"/>
+
+        <g class="node" data-tooltip="Toxinas bacterianas irritam a mucosa gástrica e intestinal, estimulando as células enterocromafins.">
+          <rect x="30" y="90" width="200" height="70" rx="8" fill="var(--box-pink-bg)" stroke="var(--box-pink-border)" stroke-width="1"/>
+          <text x="130" y="115" font-family="sans-serif" font-size="16" font-weight="bold" fill="var(--box-pink-border)" text-anchor="middle">Enterotoxina</text>
+          <text x="130" y="135" font-family="sans-serif" font-size="13" fill="#666" text-anchor="middle">Irritação da Mucosa</text>
+        </g>
+
+        <g class="node" data-tooltip="As células enterocromafins (EC) liberam grandes quantidades de Serotonina (5-HT) no trato gastrointestinal.">
+          <rect x="330" y="90" width="200" height="70" rx="8" fill="var(--box-orange-bg)" stroke="var(--box-orange-border)" stroke-width="1"/>
+          <text x="430" y="115" font-family="sans-serif" font-size="16" font-weight="bold" fill="var(--box-orange-border)" text-anchor="middle">Células EC</text>
+          <text x="430" y="135" font-family="sans-serif" font-size="13" fill="#666" text-anchor="middle">Liberação de 5-HT (Serotonina)</text>
+        </g>
+
+        <g class="node" data-tooltip="A Serotonina liga-se aos receptores 5-HT3 nas terminações do Nervo Vago, enviando o sinal de vômito ao cérebro.">
+          <rect x="620" y="90" width="160" height="70" rx="8" fill="var(--box-purple-bg)" stroke="var(--box-purple-border)" stroke-width="1"/>
+          <text x="700" y="115" font-family="sans-serif" font-size="15" font-weight="bold" fill="var(--box-purple-border)" text-anchor="middle">Nervo Vago</text>
+          <text x="700" y="135" font-family="sans-serif" font-size="12" fill="#888" text-anchor="middle">Receptor 5-HT3 Ativado</text>
+        </g>
+      </svg>
+    </div>
+    <div class="description-box">
+      Na gastroenterite aguda, as toxinas bacterianas lesam a mucosa e forçam as células enterocromafins a liberar Serotonina (5-HT). Essa serotonina ativa os receptores 5-HT3 no nervo vago, que dispara um sinal de alarme direto para o Centro do Vômito no cérebro.
+    </div>
+  </div>
+
+  <!-- Slide 2 -->
+  <div class="slide" id="slide-2">
+    <div class="header-meta">2 DE 3</div>
+    <div class="title">Bloqueio Farmacológico (Ação da Ondansetrona)</div>
+    <div class="svg-container">
+      <svg width="100%" viewBox="0 0 800 250">
+        <defs>
+          <marker id="ar2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0 1L8 5L0 9" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+          <marker id="cross" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6">
+            <path d="M2 2L8 8 M8 2L2 8" fill="none" stroke="#d65a5a" stroke-width="2" stroke-linecap="round"/>
+          </marker>
+        </defs>
+
+        <path d="M 230 125 L 320 125" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#ar2)"/>
+        
+        <!-- Bloqueio visual (X vermelho) -->
+        <path d="M 500 125 L 560 125" fill="none" stroke="#d65a5a" stroke-width="2" marker-end="url(#cross)"/>
+
+        <g class="node" data-tooltip="O Antiemético (ex: Ondansetrona) é administrado (idealmente IV) e chega rapidamente ao trato gastrointestinal e ao sistema nervoso.">
+          <rect x="30" y="90" width="200" height="70" rx="8" fill="var(--box-green-bg)" stroke="var(--box-green-border)" stroke-width="1"/>
+          <text x="130" y="115" font-family="sans-serif" font-size="16" font-weight="bold" fill="var(--box-green-border)" text-anchor="middle">Antiemético (IV)</text>
+          <text x="130" y="135" font-family="sans-serif" font-size="13" fill="#666" text-anchor="middle">Ex: Ondansetrona</text>
+        </g>
+
+        <g class="node" data-tooltip="A droga age como um Antagonista Competitivo, ocupando a fechadura do receptor 5-HT3 e impedindo que a Serotonina se ligue.">
+          <rect x="330" y="90" width="160" height="70" rx="8" fill="var(--box-purple-bg)" stroke="var(--box-purple-border)" stroke-width="1"/>
+          <text x="410" y="115" font-family="sans-serif" font-size="15" font-weight="bold" fill="var(--box-purple-border)" text-anchor="middle">Antagonismo</text>
+          <text x="410" y="135" font-family="sans-serif" font-size="12" fill="#888" text-anchor="middle">Bloqueio do 5-HT3</text>
+        </g>
+
+        <g class="node" data-tooltip="Sem a ligação da Serotonina, o Nervo Vago não consegue gerar o potencial de ação para avisar o cérebro.">
+          <rect x="580" y="90" width="180" height="70" rx="8" fill="var(--box-pink-bg)" stroke="var(--box-pink-border)" stroke-width="1"/>
+          <text x="670" y="115" font-family="sans-serif" font-size="15" font-weight="bold" fill="var(--box-pink-border)" text-anchor="middle">Nervo Vago</text>
+          <text x="670" y="135" font-family="sans-serif" font-size="12" fill="#888" text-anchor="middle">Transmissão Interrompida</text>
+        </g>
+      </svg>
+    </div>
+    <div class="description-box">
+      Os antieméticos mais modernos (como a <strong>Ondansetrona</strong>) são antagonistas competitivos. Eles entram na corrente sanguínea e "tampam" os receptores 5-HT3 do nervo vago periférico e da zona de gatilho central. Isso corta a via de comunicação entre o intestino inflamado e o cérebro.
+    </div>
+  </div>
+
+  <!-- Slide 3 -->
+  <div class="slide" id="slide-3">
+    <div class="header-meta">3 DE 3</div>
+    <div class="title">Resolução Central e Alívio</div>
+    <div class="svg-container">
+      <svg width="100%" viewBox="0 0 800 250">
+        <defs>
+          <marker id="ar3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0 1L8 5L0 9" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+
+        <path d="M 230 125 L 320 125" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#ar3)"/>
+        <path d="M 530 125 L 610 125" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#ar3)"/>
+
+        <g class="node" data-tooltip="Como o sinal do vago foi cortado, a Zona Quimiorreceptora (CTZ) no bulbo cerebral não é ativada.">
+          <rect x="30" y="90" width="200" height="70" rx="8" fill="var(--box-purple-bg)" stroke="var(--box-purple-border)" stroke-width="1"/>
+          <text x="130" y="115" font-family="sans-serif" font-size="16" font-weight="bold" fill="var(--box-purple-border)" text-anchor="middle">Centro do Vômito</text>
+          <text x="130" y="135" font-family="sans-serif" font-size="13" fill="#666" text-anchor="middle">Bulbo Cerebral Silenciado</text>
+        </g>
+
+        <g class="node" data-tooltip="O cérebro para de enviar ordens motoras para o estômago e diafragma se contraírem violentamente.">
+          <rect x="330" y="90" width="200" height="70" rx="8" fill="var(--box-orange-bg)" stroke="var(--box-orange-border)" stroke-width="1"/>
+          <text x="430" y="115" font-family="sans-serif" font-size="16" font-weight="bold" fill="var(--box-orange-border)" text-anchor="middle">Fim dos Espasmos</text>
+          <text x="430" y="135" font-family="sans-serif" font-size="13" fill="#666" text-anchor="middle">Relaxamento Gástrico</text>
+        </g>
+
+        <g class="node" data-tooltip="O paciente para de vomitar, permitindo que a hidratação (inclusive a oral, futuramente) seja bem-sucedida.">
+          <rect x="620" y="90" width="160" height="70" rx="8" fill="var(--box-green-bg)" stroke="var(--box-green-border)" stroke-width="1"/>
+          <text x="700" y="115" font-family="sans-serif" font-size="15" font-weight="bold" fill="var(--box-green-border)" text-anchor="middle">Alívio Clínico</text>
+          <text x="700" y="135" font-family="sans-serif" font-size="12" fill="#888" text-anchor="middle">Permite Hidratação</text>
+        </g>
+      </svg>
+    </div>
+    <div class="description-box">
+      Com o silenciamento do Centro do Vômito no bulbo, os espasmos retrógrados do estômago e do diafragma cessam. O controle da êmese é o passo crucial para tirar o paciente do ciclo de desidratação grave e permitir, eventualmente, o retorno da tolerância gástrica para reposição oral.
+    </div>
+  </div>
+
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+  let currentSlide = 1;
+  const totalSlides = 3;
+  function updateSlides() {
+    for (let i = 1; i <= totalSlides; i++) {
+      const slide = document.getElementById('slide-' + i);
+      if (i === currentSlide) slide.classList.add('active');
+      else slide.classList.remove('active');
+    }
+  }
+  function nextSlide() { currentSlide = currentSlide < totalSlides ? currentSlide + 1 : 1; updateSlides(); }
+  function prevSlide() { currentSlide = currentSlide > 1 ? currentSlide - 1 : totalSlides; updateSlides(); }
+
+  const tooltip = document.getElementById('tooltip');
+  document.querySelectorAll('.node').forEach(node => {
+    node.addEventListener('mousemove', (e) => {
+      const text = node.getAttribute('data-tooltip');
+      if (text) {
+        tooltip.textContent = text; tooltip.classList.add('show');
+        let x = e.pageX + 15; let y = e.pageY + 15;
+        const rect = tooltip.getBoundingClientRect();
+        if (x + rect.width > window.innerWidth) x = e.pageX - rect.width - 10;
+        tooltip.style.left = x + 'px'; tooltip.style.top = y + 'px';
+      }
+    });
+    node.addEventListener('mouseleave', () => tooltip.classList.remove('show'));
+  });
+</script>
+
+</body>
+</html>

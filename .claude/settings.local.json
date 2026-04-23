@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(start \"\" \"C:\\\\Users\\\\maria\\\\Downloads\\\\sistema_UGA_v23 \\(1\\).html\")"
+    ]
+  }
+}

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fluxo de Ação da APS em Surtos de DTA</title>
+<style>
+  :root {
+    --bg-page: #eef7f2;
+    --text-main: #1f3b2b;
+    --box-purple-bg: #f2eefa; --box-purple-border: #534ab7;
+    --box-orange-bg: #fdf2e3; --box-orange-border: #d48e3a;
+    --box-pink-bg: #fcebeb; --box-pink-border: #d65a5a;
+    --box-green-bg: #e4f3eb; --box-green-border: #2e8b57;
+    --arrow-color: #557b6d;
+  }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-page);
+    color: var(--text-main);
+    margin: 0;
+    padding: 30px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .container {
+    max-width: 900px;
+    width: 100%;
+  }
+
+  .header-meta {
+    font-size: 13px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    color: #4a6c5f;
+  }
+
+  .title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 30px;
+    color: var(--text-main);
+  }
+
+  .svg-container {
+    width: 100%;
+    margin-bottom: 30px;
+    overflow: visible;
+  }
+
+  .description-box {
+    background-color: transparent;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #2c4a3b;
+    border-top: none;
+  }
+
+  .tooltip {
+    position: absolute; background: rgba(25, 45, 35, 0.95); color: white;
+    padding: 12px 16px; border-radius: 8px; font-size: 14px; max-width: 250px;
+    pointer-events: none; opacity: 0; transition: opacity 0.2s ease, transform 0.2s ease;
+    transform: translateY(10px); z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    line-height: 1.4;
+  }
+  .tooltip.show { opacity: 1; transform: translateY(0); }
+
+  .node { cursor: pointer; transition: filter 0.2s; }
+  .node:hover { filter: brightness(0.95); }
+  .node:hover rect { stroke-width: 2px; }
+
+  .controls { display: flex; gap: 15px; margin-bottom: 30px; }
+  .btn {
+    background: white; border: 1px solid var(--arrow-color); color: var(--text-main);
+    padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 500;
+    transition: all 0.2s;
+  }
+  .btn:hover { background: var(--arrow-color); color: white; }
+  .slide { display: none; animation: fadeIn 0.4s ease; }
+  .slide.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="controls">
+    <button class="btn" onclick="prevSlide()">Anterior</button>
+    <button class="btn" onclick="nextSlide()">Próximo</button>
+  </div>
+
+  <!-- Slide 1 -->
+  <div class="slide active" id="slide-1">
+    <div class="header-meta">1 DE 3</div>
+    <div class="title">Identificação e Notificação (Gatilho Epidemiológico)</div>
+    <div class="svg-container">
+      <svg width="100%" viewBox="0 0 800 250">
+        <defs>
+          <marker id="ar1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0 1L8 5L0 9" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+
+        <path d="M 230 125 L 320 125" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#ar1)"/>
+        <path d="M 530 125 L 610 125" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#ar1)"/>
+
+        <g class="node" data-tooltip="A enfermeira percebe o acúmulo de casos similares na sala de espera da UBS (231 pessoas).">
+          <rect x="30" y="90" width="200" height="70" rx="8" fill="var(--box-green-bg)" stroke="var(--box-green-border)" stroke-width="1"/>
+          <text x="130" y="115" font-family="sans-serif" font-size="16" font-weight="bold" fill="var(--box-green-border)" text-anchor="middle">Acolhimento UBS</text>
+          <text x="130" y="135" font-family="sans-serif" font-size="13" fill="#666" text-anchor="middle">Percepção do Surto</text>
+        </g>
+
+        <g class="node" data-tooltip="Surtos de Doenças Transmitidas por Alimentos (DTA) exigem notificação imediata à Secretaria de Saúde/Vigilância.">
+          <rect x="330" y="90" width="200" height="70" rx="8" fill="var(--box-pink-bg)" stroke="var(--box-pink-border)" stroke-width="1"/>
+          <text x="430" y="115" font-family="sans-serif" font-size="16" font-weight="bold" fill="var(--box-pink-border)" text-anchor="middle">Notificação Compulsória</text>
+          <text x="430" y="135" font-family="sans-serif" font-size="13" fill="#666" text-anchor="middle">Vigilância Epidemiológica</text>
+        </g>
+
+        <g class="node" data-tooltip="A Vigilância Sanitária vai ao local (ex: Festa de Folia de Reis) confiscar amostras dos alimentos para cultura bacteriana.">
+          <rect x="620" y="90" width="160" height="70" rx="8" fill="var(--box-purple-bg)" stroke="var(--box-purple-border)" stroke-width="1"/>
+          <text x="700" y="115" font-family="sans-serif" font-size="15" font-weight="bold" fill="var(--box-purple-border)" text-anchor="middle">Ação Sanitária</text>
+          <text x="700" y="135" font-family="sans-serif" font-size="12" fill="#888" text-anchor="middle">Coleta de Alimentos</text>
+        </g>
+      </svg>
+    </div>
+    <div class="description-box">
+      A Atenção Primária é a "porta de entrada" do SUS. O papel mais crítico nas primeiras horas não é tratar um indivíduo isolado, mas sim perceber que dezenas de pacientes chegaram com a mesma história. Isso aciona o alarme epidemiológico (Notificação Compulsória) para que a Vigilância Sanitária corra para recolher os alimentos suspeitos antes que mais pessoas comam.
+    </div>
+  </div>
+
+  <!-- Slide 2 -->
+  <div class="slide" id="slide-2">
+    <div class="header-meta">2 DE 3</div>
+    <div class="title">Coordenação do Cuidado (Manejo de Massa)</div>
+    <div class="svg-container">
+      <svg width="100%" viewBox="0 0 800 250">
+        <defs>
+          <marker id="ar2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0 1L8 5L0 9" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+
+        <path d="M 230 125 L 320 125" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#ar2)"/>
+        <path d="M 530 125 L 610 125" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#ar2)"/>
+
+        <g class="node" data-tooltip="A UBS precisa separar rapidamente os casos leves (terapia oral) dos graves (terapia IV e transferência).">
+          <rect x="30" y="90" width="200" height="70" rx="8" fill="var(--box-orange-bg)" stroke="var(--box-orange-border)" stroke-width="1"/>
+          <text x="130" y="115" font-family="sans-serif" font-size="16" font-weight="bold" fill="var(--box-orange-border)" text-anchor="middle">Triagem Rápida</text>
+          <text x="130" y="135" font-family="sans-serif" font-size="13" fill="#666" text-anchor="middle">Classificação de Risco</text>
+        </g>
+
+        <g class="node" data-tooltip="Criação de protocolos padronizados na unidade: SRO para os leves, acessos venosos para os desidratados graves.">
+          <rect x="330" y="90" width="200" height="70" rx="8" fill="var(--box-green-bg)" stroke="var(--box-green-border)" stroke-width="1"/>
+          <text x="430" y="115" font-family="sans-serif" font-size="16" font-weight="bold" fill="var(--box-green-border)" text-anchor="middle">Manejo Clínico</text>
+          <text x="430" y="135" font-family="sans-serif" font-size="13" fill="#666" text-anchor="middle">Hidratação Oral / Venosa</text>
+        </g>
+
+        <g class="node" data-tooltip="Casos instáveis (choque hipovolêmico) precisam ser estabilizados e encaminhados de ambulância para a UPA ou Hospital.">
+          <rect x="620" y="90" width="160" height="70" rx="8" fill="var(--box-pink-bg)" stroke="var(--box-pink-border)" stroke-width="1"/>
+          <text x="700" y="115" font-family="sans-serif" font-size="15" font-weight="bold" fill="var(--box-pink-border)" text-anchor="middle">Referência</text>
+          <text x="700" y="135" font-family="sans-serif" font-size="12" fill="#888" text-anchor="middle">Encaminhar Graves</text>
+        </g>
+      </svg>
+    </div>
+    <div class="description-box">
+      Com centenas de pessoas, a UBS não pode agir com lentidão. A coordenação do cuidado envolve criar uma sala de hidratação coletiva, estabelecer protocolos padronizados de medicação antiemética, e coordenar a ambulância para remover os pacientes que entraram em choque hipovolêmico grave.
+    </div>
+  </div>
+
+  <!-- Slide 3 -->
+  <div class="slide" id="slide-3">
+    <div class="header-meta">3 DE 3</div>
+    <div class="title">Ação no Território e Educação em Saúde</div>
+    <div class="svg-container">
+      <svg width="100%" viewBox="0 0 800 250">
+        <defs>
+          <marker id="ar3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0 1L8 5L0 9" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+
+        <path d="M 230 125 L 320 125" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#ar3)"/>
+        <path d="M 530 125 L 610 125" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#ar3)"/>
+
+        <g class="node" data-tooltip="Os Agentes Comunitários de Saúde (ACS) vão à comunidade ver se idosos e crianças estão passando mal em casa.">
+          <rect x="30" y="90" width="200" height="70" rx="8" fill="var(--box-purple-bg)" stroke="var(--box-purple-border)" stroke-width="1"/>
+          <text x="130" y="115" font-family="sans-serif" font-size="16" font-weight="bold" fill="var(--box-purple-border)" text-anchor="middle">Busca Ativa (ACS)</text>
+          <text x="130" y="135" font-family="sans-serif" font-size="13" fill="#666" text-anchor="middle">Varredura no Território</text>
+        </g>
+
+        <g class="node" data-tooltip="Orientação à população local sobre higienização, refrigeração de alimentos e preparo seguro.">
+          <rect x="330" y="90" width="200" height="70" rx="8" fill="var(--box-orange-bg)" stroke="var(--box-orange-border)" stroke-width="1"/>
+          <text x="430" y="115" font-family="sans-serif" font-size="16" font-weight="bold" fill="var(--box-orange-border)" text-anchor="middle">Educação Sanitária</text>
+          <text x="430" y="135" font-family="sans-serif" font-size="13" fill="#666" text-anchor="middle">Prevenção de Novos Surtos</text>
+        </g>
+
+        <g class="node" data-tooltip="O surto é contido e a população adquire resiliência contra futuras contaminações comunitárias.">
+          <rect x="620" y="90" width="160" height="70" rx="8" fill="var(--box-green-bg)" stroke="var(--box-green-border)" stroke-width="1"/>
+          <text x="700" y="115" font-family="sans-serif" font-size="15" font-weight="bold" fill="var(--box-green-border)" text-anchor="middle">Bloqueio do Surto</text>
+          <text x="700" y="135" font-family="sans-serif" font-size="12" fill="#888" text-anchor="middle">Proteção da Comunidade</text>
+        </g>
+      </svg>
+    </div>
+    <div class="description-box">
+      Passada a fase aguda, a APS entra com seu diferencial: o conhecimento do território. Os Agentes Comunitários de Saúde (ACS) fazem busca ativa nas casas de idosos vulneráveis que foram à festa, e a equipe de enfermagem realiza ações de Educação em Saúde sobre armazenamento e segurança alimentar para as cozinheiras da comunidade.
+    </div>
+  </div>
+
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+  let currentSlide = 1;
+  const totalSlides = 3;
+  function updateSlides() {
+    for (let i = 1; i <= totalSlides; i++) {
+      const slide = document.getElementById('slide-' + i);
+      if (i === currentSlide) slide.classList.add('active');
+      else slide.classList.remove('active');
+    }
+  }
+  function nextSlide() { currentSlide = currentSlide < totalSlides ? currentSlide + 1 : 1; updateSlides(); }
+  function prevSlide() { currentSlide = currentSlide > 1 ? currentSlide - 1 : totalSlides; updateSlides(); }
+
+  const tooltip = document.getElementById('tooltip');
+  document.querySelectorAll('.node').forEach(node => {
+    node.addEventListener('mousemove', (e) => {
+      const text = node.getAttribute('data-tooltip');
+      if (text) {
+        tooltip.textContent = text; tooltip.classList.add('show');
+        let x = e.pageX + 15; let y = e.pageY + 15;
+        const rect = tooltip.getBoundingClientRect();
+        if (x + rect.width > window.innerWidth) x = e.pageX - rect.width - 10;
+        tooltip.style.left = x + 'px'; tooltip.style.top = y + 'px';
+      }
+    });
+    node.addEventListener('mouseleave', () => tooltip.classList.remove('show'));
+  });
+</script>
+
+</body>
+</html>

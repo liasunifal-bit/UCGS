@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CBCJ 2026 — Downloads</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #f0f4f8;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(26,58,92,0.12);
+      max-width: 600px;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #1A3A5C 0%, #2E6DA4 100%);
+      padding: 2rem 2.5rem;
+      color: #fff;
+    }
+
+    .header .badge {
+      display: inline-block;
+      background: rgba(168,200,232,0.25);
+      border: 1px solid rgba(168,200,232,0.5);
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      padding: 0.25rem 0.8rem;
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+    }
+
+    .header h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.4rem;
+    }
+
+    .header p {
+      font-size: 0.85rem;
+      color: #a8c8e8;
+    }
+
+    .stats {
+      display: flex;
+      gap: 1.5rem;
+      padding: 1.25rem 2.5rem;
+      background: #ebf2fa;
+      border-bottom: 1px solid #d0e3f5;
+    }
+
+    .stat { text-align: center; flex: 1; }
+    .stat .value { font-size: 1.4rem; font-weight: 700; color: #1A3A5C; }
+    .stat .label { font-size: 0.72rem; color: #7f8c8d; margin-top: 2px; }
+
+    .files {
+      padding: 1.75rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .files h2 {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #7f8c8d;
+      margin-bottom: 0.25rem;
+    }
+
+    .file-btn {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      border-radius: 10px;
+      border: 2px solid #e2ebf5;
+      background: #f8fbff;
+      text-decoration: none;
+      color: #1A3A5C;
+      transition: all 0.18s ease;
+      cursor: pointer;
+    }
+
+    .file-btn:hover {
+      border-color: #2E6DA4;
+      background: #ebf2fa;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(46,109,164,0.15);
+    }
+
+    .file-btn .icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+
+    .icon-pptx { background: #fff2f0; }
+    .icon-png  { background: #f0faf2; }
+
+    .file-btn .info { flex: 1; }
+    .file-btn .name { font-size: 0.9rem; font-weight: 600; }
+    .file-btn .desc { font-size: 0.75rem; color: #7f8c8d; margin-top: 2px; }
+    .file-btn .size {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #2E6DA4;
+      background: #ebf2fa;
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
+    }
+
+    .footer {
+      padding: 1rem 2.5rem;
+      border-top: 1px solid #eef3f8;
+      font-size: 0.75rem;
+      color: #7f8c8d;
+      text-align: center;
+    }
+
+    .note {
+      background: #fffbea;
+      border-left: 3px solid #f0a500;
+      padding: 0.6rem 1rem;
+      border-radius: 0 6px 6px 0;
+      font-size: 0.78rem;
+      color: #7a5c00;
+      margin-top: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+
+  <div class="header">
+    <div class="badge">CBCJ 2026 · Pôster Científico</div>
+    <h1>Panorama da ATJ no SUS<br>Distribuição Regional & Evolução Temporal</h1>
+    <p>Jan/2015 – Jan/2025 · Dados reais DataSUS/SIHAS · Proc. 0408050063</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="value">79.692</div>
+      <div class="label">AIH aprovadas</div>
+    </div>
+    <div class="stat">
+      <div class="value">−52,9%</div>
+      <div class="label">Queda COVID-19</div>
+    </div>
+    <div class="stat">
+      <div class="value">+57,0%</div>
+      <div class="label">Crescimento 2024 vs. 2019</div>
+    </div>
+    <div class="stat">
+      <div class="value">86,2%</div>
+      <div class="label">Sul + Sudeste</div>
+    </div>
+  </div>
+
+  <div class="files">
+    <h2>📥 Arquivos para download</h2>
+
+    <!-- PPTX -->
+    <a class="file-btn" href="cbcj2026_slides.pptx" download="cbcj2026_slides.pptx">
+      <div class="icon icon-pptx">📊</div>
+      <div class="info">
+        <div class="name">cbcj2026_slides.pptx</div>
+        <div class="desc">Apresentação · 8 slides · 16:9 widescreen · PowerPoint</div>
+      </div>
+      <div class="size">~793 KB</div>
+    </a>
+
+    <!-- Gráfico 1 -->
+    <a class="file-btn" href="grafico1_distribuicao_regional.png" download="grafico1_distribuicao_regional.png">
+      <div class="icon icon-png">🖼️</div>
+      <div class="info">
+        <div class="name">grafico1_distribuicao_regional.png</div>
+        <div class="desc">Distribuição Regional das ATJs · 300 dpi</div>
+      </div>
+      <div class="size">~208 KB</div>
+    </a>
+
+    <!-- Gráfico 2 -->
+    <a class="file-btn" href="grafico2_serie_temporal.png" download="grafico2_serie_temporal.png">
+      <div class="icon icon-png">🖼️</div>
+      <div class="info">
+        <div class="name">grafico2_serie_temporal.png</div>
+        <div class="desc">Série Temporal Jan/2015–Jan/2025 · 300 dpi</div>
+      </div>
+      <div class="size">~338 KB</div>
+    </a>
+
+    <!-- Gráfico 3 -->
+    <a class="file-btn" href="grafico3_iniquidade_regional.png" download="grafico3_iniquidade_regional.png">
+      <div class="icon icon-png">🖼️</div>
+      <div class="info">
+        <div class="name">grafico3_iniquidade_regional.png</div>
+        <div class="desc">Iniquidade Regional no Acesso · 300 dpi</div>
+      </div>
+      <div class="size">~271 KB</div>
+    </a>
+
+    <div class="note">
+      ℹ️ Abra este arquivo diretamente pelo navegador (duplo clique) para que os downloads funcionem corretamente.
+    </div>
+  </div>
+
+  <div class="footer">
+    Fonte: DataSUS/SIHAS · Consultado: Março/2026 · Gerado por CBCJ Poster Assistant
+  </div>
+
+</div>
+
+</body>
+</html>

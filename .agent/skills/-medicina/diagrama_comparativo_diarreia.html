@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagrama - Intoxicação vs Parasitose</title>
+<style>
+  :root {
+    --bg-page: #eef7f2;
+    --text-main: #1f3b2b;
+    --box-purple-bg: #f2eefa; --box-purple-border: #534ab7;
+    --box-orange-bg: #fdf2e3; --box-orange-border: #d48e3a;
+    --box-pink-bg: #fcebeb; --box-pink-border: #d65a5a;
+    --box-green-bg: #e4f3eb; --box-green-border: #2e8b57;
+    --arrow-color: #557b6d;
+  }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-page);
+    color: var(--text-main);
+    margin: 0;
+    padding: 30px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .container {
+    max-width: 900px;
+    width: 100%;
+  }
+
+  .header-meta {
+    font-size: 13px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    color: #4a6c5f;
+  }
+
+  .title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 30px;
+    color: var(--text-main);
+  }
+
+  .svg-container {
+    width: 100%;
+    margin-bottom: 30px;
+    overflow: visible;
+  }
+
+  .description-box {
+    background-color: transparent;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #2c4a3b;
+    border-top: none;
+  }
+
+  .tooltip {
+    position: absolute; background: rgba(25, 45, 35, 0.95); color: white;
+    padding: 12px 16px; border-radius: 8px; font-size: 14px; max-width: 250px;
+    pointer-events: none; opacity: 0; transition: opacity 0.2s ease, transform 0.2s ease;
+    transform: translateY(10px); z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    line-height: 1.4;
+  }
+  .tooltip.show { opacity: 1; transform: translateY(0); }
+
+  .node { cursor: pointer; transition: filter 0.2s; }
+  .node:hover { filter: brightness(0.95); }
+  .node:hover rect { stroke-width: 2px; }
+
+  .controls { display: flex; gap: 15px; margin-bottom: 30px; }
+  .btn {
+    background: white; border: 1px solid var(--arrow-color); color: var(--text-main);
+    padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 500;
+    transition: all 0.2s;
+  }
+  .btn:hover { background: var(--arrow-color); color: white; }
+  .slide { display: none; animation: fadeIn 0.4s ease; }
+  .slide.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="controls">
+    <button class="btn" onclick="prevSlide()">Anterior</button>
+    <button class="btn" onclick="nextSlide()">Próximo</button>
+  </div>
+
+  <!-- Slide 1 -->
+  <div class="slide active" id="slide-1">
+    <div class="header-meta">1 DE 4</div>
+    <div class="title">A Natureza do Agente Contaminante</div>
+    <div class="svg-container">
+      <svg width="100%" viewBox="0 0 800 250">
+        <defs>
+          <marker id="ar1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0 1L8 5L0 9" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+
+        <path d="M 230 125 L 300 70" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#ar1)"/>
+        <path d="M 230 125 L 300 180" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#ar1)"/>
+
+        <g class="node" data-tooltip="O paciente consome um alimento ou água que sofreu quebra de barreira sanitária.">
+          <rect x="30" y="90" width="200" height="70" rx="8" fill="var(--box-green-bg)" stroke="var(--box-green-border)" stroke-width="1"/>
+          <text x="130" y="115" font-family="sans-serif" font-size="16" font-weight="bold" fill="var(--box-green-border)" text-anchor="middle">Ingestão Contaminada</text>
+          <text x="130" y="135" font-family="sans-serif" font-size="13" fill="#666" text-anchor="middle">Água ou Alimento</text>
+        </g>
+
+        <g class="node" data-tooltip="Na intoxicação aguda, a bactéria (ex: S. aureus) multiplicou-se no alimento exposto e secretou toxinas antes mesmo da ingestão.">
+          <rect x="310" y="30" width="220" height="70" rx="8" fill="var(--box-pink-bg)" stroke="var(--box-pink-border)" stroke-width="1"/>
+          <text x="420" y="55" font-family="sans-serif" font-size="15" font-weight="bold" fill="var(--box-pink-border)" text-anchor="middle">Intoxicação Aguda</text>
+          <text x="420" y="75" font-family="sans-serif" font-size="12" fill="#888" text-anchor="middle">Toxina Pré-formada no prato</text>
+        </g>
+
+        <g class="node" data-tooltip="Na parasitose, o paciente ingere a forma de resistência do verme/protozoário (cisto ou ovo), geralmente por água não tratada ou mãos sujas.">
+          <rect x="310" y="150" width="220" height="70" rx="8" fill="var(--box-orange-bg)" stroke="var(--box-orange-border)" stroke-width="1"/>
+          <text x="420" y="175" font-family="sans-serif" font-size="15" font-weight="bold" fill="var(--box-orange-border)" text-anchor="middle">Parasitose Intestinal</text>
+          <text x="420" y="195" font-family="sans-serif" font-size="12" fill="#888" text-anchor="middle">Ingestão de Cistos/Ovos</text>
+        </g>
+      </svg>
+    </div>
+    <div class="description-box">
+      A grande bifurcação no diagnóstico começa na mesa. Se a pessoa engoliu uma "arma pronta" (toxina bacteriana) que estava no alimento mal armazenado, teremos uma intoxicação. Se ela engoliu o "ovo do inimigo" (cisto de parasita), teremos uma parasitose.
+    </div>
+  </div>
+
+  <!-- Slide 2 -->
+  <div class="slide" id="slide-2">
+    <div class="header-meta">2 DE 4</div>
+    <div class="title">O Tempo de Incubação (A Regra do Relógio)</div>
+    <div class="svg-container">
+      <svg width="100%" viewBox="0 0 800 250">
+        <defs>
+          <marker id="ar2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0 1L8 5L0 9" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+
+        <path d="M 230 65 L 320 65" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#ar2)"/>
+        <path d="M 230 185 L 320 185" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#ar2)"/>
+
+        <g class="node" data-tooltip="Como a toxina já entra pronta, ela bate na mucosa do estômago e aciona o reflexo do vômito quase imediatamente.">
+          <rect x="30" y="30" width="200" height="70" rx="8" fill="var(--box-pink-bg)" stroke="var(--box-pink-border)" stroke-width="1"/>
+          <text x="130" y="55" font-family="sans-serif" font-size="16" font-weight="bold" fill="var(--box-pink-border)" text-anchor="middle">Toxina Pronta</text>
+          <text x="130" y="75" font-family="sans-serif" font-size="13" fill="#666" text-anchor="middle">Ação direta na mucosa</text>
+        </g>
+
+        <g class="node" data-tooltip="Incubação ultra-curta: 1 a 6 horas após a refeição suspeita. A instalação é abrupta.">
+          <rect x="330" y="30" width="200" height="70" rx="8" fill="var(--box-pink-bg)" stroke="var(--box-pink-border)" stroke-width="1"/>
+          <text x="430" y="55" font-family="sans-serif" font-size="16" font-weight="bold" fill="var(--box-pink-border)" text-anchor="middle">1 a 6 Horas</text>
+          <text x="430" y="75" font-family="sans-serif" font-size="13" fill="#888" text-anchor="middle">Apresentação Abrupta</text>
+        </g>
+
+        <g class="node" data-tooltip="O cisto precisa chegar ao intestino, ser ativado pelos ácidos, romper-se, e o parasita recém-nascido precisa crescer e se fixar na parede intestinal.">
+          <rect x="30" y="150" width="200" height="70" rx="8" fill="var(--box-orange-bg)" stroke="var(--box-orange-border)" stroke-width="1"/>
+          <text x="130" y="175" font-family="sans-serif" font-size="16" font-weight="bold" fill="var(--box-orange-border)" text-anchor="middle">Cisto Adormecido</text>
+          <text x="130" y="195" font-family="sans-serif" font-size="13" fill="#666" text-anchor="middle">Necessita maturação</text>
+        </g>
+
+        <g class="node" data-tooltip="Incubação longa: Semanas. O quadro começa de forma arrastada, com gases e cólicas esporádicas.">
+          <rect x="330" y="150" width="200" height="70" rx="8" fill="var(--box-orange-bg)" stroke="var(--box-orange-border)" stroke-width="1"/>
+          <text x="430" y="175" font-family="sans-serif" font-size="16" font-weight="bold" fill="var(--box-orange-border)" text-anchor="middle">1 a 3 Semanas</text>
+          <text x="430" y="195" font-family="sans-serif" font-size="13" fill="#888" text-anchor="middle">Apresentação Insidiosa</text>
+        </g>
+
+      </svg>
+    </div>
+    <div class="description-box">
+      Esta é a informação mais importante da anamnese. Se o tempo entre a exposição e a doença for de algumas <strong>horas</strong>, é intoxicação medicada por toxina. Se for de várias <strong>semanas</strong>, é o ciclo reprodutivo de um parasita se estabelecendo no organismo.
+    </div>
+  </div>
+
+  <!-- Slide 3 -->
+  <div class="slide" id="slide-3">
+    <div class="header-meta">3 DE 4</div>
+    <div class="title">Clínica e Fisiopatologia</div>
+    <div class="svg-container">
+      <svg width="100%" viewBox="0 0 800 250">
+        <defs>
+          <marker id="ar3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0 1L8 5L0 9" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+
+        <path d="M 230 65 L 320 65" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#ar3)"/>
+        <path d="M 230 185 L 320 185" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#ar3)"/>
+
+        <g class="node" data-tooltip="A toxina força a secreção de fluidos (Cloro) no lúmen e estimula o reflexo vagal violento.">
+          <rect x="30" y="30" width="200" height="70" rx="8" fill="var(--box-pink-bg)" stroke="var(--box-pink-border)" stroke-width="1"/>
+          <text x="130" y="55" font-family="sans-serif" font-size="16" font-weight="bold" fill="var(--box-pink-border)" text-anchor="middle">Mecanismo Secretório</text>
+          <text x="130" y="75" font-family="sans-serif" font-size="13" fill="#666" text-anchor="middle">Intoxicação Aguda</text>
+        </g>
+
+        <g class="node" data-tooltip="O paciente apresenta vômitos incoercíveis, diarreia aquosa abundante e cólicas. Geralmente SEM febre. Dura 2 dias no máximo.">
+          <rect x="330" y="30" width="220" height="70" rx="8" fill="var(--box-pink-bg)" stroke="var(--box-pink-border)" stroke-width="1"/>
+          <text x="440" y="55" font-family="sans-serif" font-size="15" font-weight="bold" fill="var(--box-pink-border)" text-anchor="middle">Vômito + Diarreia Aquosa</text>
+          <text x="440" y="75" font-family="sans-serif" font-size="12" fill="#888" text-anchor="middle">Agudo, Autolimitado, Sem Febre</text>
+        </g>
+
+        <g class="node" data-tooltip="Parasitas podem 'tapetar' o intestino impedindo a absorção (Giardia) ou invadir a parede causando úlceras sangrantes (Ameba).">
+          <rect x="30" y="150" width="200" height="70" rx="8" fill="var(--box-orange-bg)" stroke="var(--box-orange-border)" stroke-width="1"/>
+          <text x="130" y="175" font-family="sans-serif" font-size="16" font-weight="bold" fill="var(--box-orange-border)" text-anchor="middle">Má-Absorção / Invasão</text>
+          <text x="130" y="195" font-family="sans-serif" font-size="13" fill="#666" text-anchor="middle">Parasitose Intestinal</text>
+        </g>
+
+        <g class="node" data-tooltip="Fezes com gordura (esteatorreia), muco ou sangue (disenteria). Vômitos não são o sintoma principal. Pode durar meses.">
+          <rect x="330" y="150" width="220" height="70" rx="8" fill="var(--box-orange-bg)" stroke="var(--box-orange-border)" stroke-width="1"/>
+          <text x="440" y="175" font-family="sans-serif" font-size="15" font-weight="bold" fill="var(--box-orange-border)" text-anchor="middle">Gordura, Muco ou Sangue</text>
+          <text x="440" y="195" font-family="sans-serif" font-size="12" fill="#888" text-anchor="middle">Arrasado, Distensão Abdominal</text>
+        </g>
+      </svg>
+    </div>
+    <div class="description-box">
+      Fisiopatologicamente, toxinas causam um expurgo violento (muita água e muito vômito). Parasitas causam uma inflamação de longo prazo, danificando a mucosa e gerando fezes patológicas (com gordura, muco ou sangue), onde o vômito raramente é o sintoma central.
+    </div>
+  </div>
+
+  <!-- Slide 4 -->
+  <div class="slide" id="slide-4">
+    <div class="header-meta">4 DE 4</div>
+    <div class="title">O Padrão Epidemiológico</div>
+    <div class="svg-container">
+      <svg width="100%" viewBox="0 0 800 250">
+        <defs>
+          <marker id="ar4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0 1L8 5L0 9" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+
+        <path d="M 230 65 L 320 65" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#ar4)"/>
+        <path d="M 230 185 L 320 185" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#ar4)"/>
+
+        <g class="node" data-tooltip="Eventos sociais, casamentos, festas religiosas. O mesmo lote de comida ficou fora de refrigeração.">
+          <rect x="30" y="30" width="200" height="70" rx="8" fill="var(--box-pink-bg)" stroke="var(--box-pink-border)" stroke-width="1"/>
+          <text x="130" y="55" font-family="sans-serif" font-size="16" font-weight="bold" fill="var(--box-pink-border)" text-anchor="middle">Eventos Coletivos</text>
+          <text x="130" y="75" font-family="sans-serif" font-size="13" fill="#666" text-anchor="middle">Ex: "Folia de Reis"</text>
+        </g>
+
+        <g class="node" data-tooltip="Múltiplas pessoas buscam o pronto-atendimento ao mesmo tempo (Surto explosivo e agudo).">
+          <rect x="330" y="30" width="220" height="70" rx="8" fill="var(--box-pink-bg)" stroke="var(--box-pink-border)" stroke-width="1"/>
+          <text x="440" y="55" font-family="sans-serif" font-size="15" font-weight="bold" fill="var(--box-pink-border)" text-anchor="middle">Surto em Ponto Explosivo</text>
+          <text x="440" y="75" font-family="sans-serif" font-size="12" fill="#888" text-anchor="middle">Vários adoecem na mesma hora</text>
+        </g>
+
+        <g class="node" data-tooltip="Déficit de saneamento básico, falta de rede de esgoto, águas de poço ou contato com fezes de animais.">
+          <rect x="30" y="150" width="200" height="70" rx="8" fill="var(--box-orange-bg)" stroke="var(--box-orange-border)" stroke-width="1"/>
+          <text x="130" y="175" font-family="sans-serif" font-size="16" font-weight="bold" fill="var(--box-orange-border)" text-anchor="middle">Saneamento e Ecoturismo</text>
+          <text x="130" y="195" font-family="sans-serif" font-size="13" fill="#666" text-anchor="middle">Condições Contínuas</text>
+        </g>
+
+        <g class="node" data-tooltip="As pessoas adoecem em momentos distintos ao longo de semanas. O padrão é esporádico ou endêmico.">
+          <rect x="330" y="150" width="220" height="70" rx="8" fill="var(--box-orange-bg)" stroke="var(--box-orange-border)" stroke-width="1"/>
+          <text x="440" y="175" font-family="sans-serif" font-size="15" font-weight="bold" fill="var(--box-orange-border)" text-anchor="middle">Padrão Esporádico/Endêmico</text>
+          <text x="440" y="195" font-family="sans-serif" font-size="12" fill="#888" text-anchor="middle">Casos isolados, sem pico único</text>
+        </g>
+      </svg>
+    </div>
+    <div class="description-box">
+      Epidemiologicamente, toxinfecções geram lotação nas UPAs (surtos de dezenas de pessoas da mesma festa) em um único dia. Parasitoses afetam indivíduos ou famílias de forma arrastada, frequentemente sem vínculo com um único alimento, mas com as condições de moradia ou água.
+    </div>
+  </div>
+
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+  let currentSlide = 1;
+  const totalSlides = 4;
+  function updateSlides() {
+    for (let i = 1; i <= totalSlides; i++) {
+      const slide = document.getElementById('slide-' + i);
+      if (i === currentSlide) slide.classList.add('active');
+      else slide.classList.remove('active');
+    }
+  }
+  function nextSlide() { currentSlide = currentSlide < totalSlides ? currentSlide + 1 : 1; updateSlides(); }
+  function prevSlide() { currentSlide = currentSlide > 1 ? currentSlide - 1 : totalSlides; updateSlides(); }
+
+  const tooltip = document.getElementById('tooltip');
+  document.querySelectorAll('.node').forEach(node => {
+    node.addEventListener('mousemove', (e) => {
+      const text = node.getAttribute('data-tooltip');
+      if (text) {
+        tooltip.textContent = text; tooltip.classList.add('show');
+        let x = e.pageX + 15; let y = e.pageY + 15;
+        const rect = tooltip.getBoundingClientRect();
+        if (x + rect.width > window.innerWidth) x = e.pageX - rect.width - 10;
+        tooltip.style.left = x + 'px'; tooltip.style.top = y + 'px';
+      }
+    });
+    node.addEventListener('mouseleave', () => tooltip.classList.remove('show'));
+  });
+</script>
+
+</body>
+</html>

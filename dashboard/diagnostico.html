@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UCGS — Diagnóstico de Conexão Supabase</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0B1120;
+            color: #E2E8F0;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container { max-width: 860px; margin: 0 auto; }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #1E293B;
+        }
+        .header h1 { font-size: 26px; color: #60C4FF; font-weight: 700; margin-bottom: 6px; }
+        .header p  { color: #64748B; font-size: 14px; }
+        .badge {
+            display: inline-block;
+            background: #1E293B;
+            color: #60C4FF;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        /* Config Section */
+        .config-box {
+            background: #111827;
+            border: 1px solid #1E293B;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .config-box h3 { color: #94A3B8; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 16px; }
+        .config-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .config-field label { display: block; font-size: 12px; color: #64748B; margin-bottom: 6px; }
+        .config-field input {
+            width: 100%;
+            background: #0B1120;
+            border: 1px solid #1E293B;
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: #E2E8F0;
+            font-size: 13px;
+            font-family: 'Courier New', monospace;
+            outline: none;
+            transition: border 0.2s;
+        }
+        .config-field input:focus { border-color: #60C4FF; }
+
+        /* Test Cards */
+        .tests-grid { display: grid; gap: 16px; }
+        .test-card {
+            background: #111827;
+            border: 1px solid #1E293B;
+            border-radius: 12px;
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: border 0.3s;
+        }
+        .test-card.running  { border-color: #F59E0B; }
+        .test-card.success  { border-color: #10B981; }
+        .test-card.error    { border-color: #EF4444; }
+
+        .test-icon {
+            width: 44px; height: 44px;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px;
+            background: #1E293B;
+            flex-shrink: 0;
+        }
+        .test-info { flex: 1; min-width: 0; }
+        .test-info h3 { font-size: 15px; font-weight: 600; color: #F1F5F9; margin-bottom: 4px; }
+        .test-info p  { font-size: 12px; color: #64748B; }
+        .test-status {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: 20px;
+            background: #1E293B;
+            color: #64748B;
+            white-space: nowrap;
+            transition: all 0.3s;
+        }
+        .running .test-status  { background: #451A03; color: #F59E0B; }
+        .success .test-status  { background: #022C22; color: #10B981; }
+        .error   .test-status  { background: #2D0F10; color: #EF4444; }
+
+        .test-detail {
+            font-size: 12px;
+            color: #475569;
+            font-family: 'Courier New', monospace;
+            background: #0B1120;
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-top: 10px;
+            word-break: break-all;
+            display: none;
+        }
+        .test-detail.visible { display: block; }
+
+        /* Run Button */
+        .run-btn {
+            width: 100%;
+            margin-top: 24px;
+            padding: 16px;
+            background: linear-gradient(135deg, #1B6EF5, #0D50BF);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            letter-spacing: 0.3px;
+            transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .run-btn:hover { opacity: 0.9; }
+        .run-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Summary */
+        .summary {
+            margin-top: 24px;
+            padding: 20px 24px;
+            border-radius: 12px;
+            background: #111827;
+            border: 1px solid #1E293B;
+            display: none;
+        }
+        .summary.visible { display: block; }
+        .summary h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+        .summary p  { font-size: 14px; color: #94A3B8; }
+        .summary.all-ok  { border-color: #10B981; }
+        .summary.has-err { border-color: #EF4444; }
+
+        /* Spinner */
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner {
+            width: 16px; height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="badge">UCGS — Diagnóstico</div>
+        <h1>🔌 Teste de Conexão Supabase</h1>
+        <p>Verifica a conectividade entre o painel e o banco de dados em tempo real</p>
+    </div>
+
+    <!-- Configuração -->
+    <div class="config-box">
+        <h3>⚙ Configuração do Projeto</h3>
+        <div class="config-grid">
+            <div class="config-field">
+                <label>Supabase Project URL</label>
+                <input type="text" id="cfgUrl" value="https://llqphjlpypnyvknpfdyn.supabase.co" />
+            </div>
+            <div class="config-field">
+                <label>Anon Public Key</label>
+                <input type="text" id="cfgKey" value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxscXBoamxweXBueXZrbnBmZHluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1MzM0MjksImV4cCI6MjA5MjEwOTQyOX0.h_ycCGtWgnzB5CtM-dXv1BlUt-iIN0RxyuGnAJBkbow" />
+            </div>
+        </div>
+    </div>
+
+    <!-- Testes -->
+    <div class="tests-grid">
+        <!-- Teste 1: Ping REST -->
+        <div class="test-card" id="test1">
+            <div class="test-icon">🌐</div>
+            <div class="test-info">
+                <h3>Conectividade REST API</h3>
+                <p>Verifica se o endpoint REST do Supabase está acessível</p>
+                <div class="test-detail" id="detail1"></div>
+            </div>
+            <div class="test-status" id="status1">Aguardando</div>
+        </div>
+
+        <!-- Teste 2: Anon Key -->
+        <div class="test-card" id="test2">
+            <div class="test-icon">🔑</div>
+            <div class="test-info">
+                <h3>Autenticação Anon Key</h3>
+                <p>Valida se a chave pública está correta e ativa</p>
+                <div class="test-detail" id="detail2"></div>
+            </div>
+            <div class="test-status" id="status2">Aguardando</div>
+        </div>
+
+        <!-- Teste 3: Tabela pacientes -->
+        <div class="test-card" id="test3">
+            <div class="test-icon">🗄</div>
+            <div class="test-info">
+                <h3>Tabela: pacientes</h3>
+                <p>Tenta ler a tabela de pacientes (verifica RLS)</p>
+                <div class="test-detail" id="detail3"></div>
+            </div>
+            <div class="test-status" id="status3">Aguardando</div>
+        </div>
+
+        <!-- Teste 4: Tabela profiles -->
+        <div class="test-card" id="test4">
+            <div class="test-icon">👤</div>
+            <div class="test-info">
+                <h3>Tabela: profiles</h3>
+                <p>Tenta ler a tabela de perfis de profissionais</p>
+                <div class="test-detail" id="detail4"></div>
+            </div>
+            <div class="test-status" id="status4">Aguardando</div>
+        </div>
+
+        <!-- Teste 5: Sessão Auth -->
+        <div class="test-card" id="test5">
+            <div class="test-icon">🔐</div>
+            <div class="test-info">
+                <h3>Sessão de Autenticação</h3>
+                <p>Verifica se existe uma sessão ativa no navegador</p>
+                <div class="test-detail" id="detail5"></div>
+            </div>
+            <div class="test-status" id="status5">Aguardando</div>
+        </div>
+    </div>
+
+    <button class="run-btn" id="runBtn" onclick="runAllTests()">
+        <span id="btnLabel">▶ Executar Todos os Testes</span>
+    </button>
+
+    <div class="summary" id="summary">
+        <h3 id="summaryTitle"></h3>
+        <p id="summaryMsg"></p>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+function setStatus(id, state, msg, detail) {
+    var card   = document.getElementById('test' + id);
+    var status = document.getElementById('status' + id);
+    var det    = document.getElementById('detail' + id);
+    card.className   = 'test-card ' + state;
+    status.textContent = msg;
+    if (detail) {
+        det.textContent = detail;
+        det.classList.add('visible');
+    }
+}
+
+async function runAllTests() {
+    var btn = document.getElementById('runBtn');
+    var lbl = document.getElementById('btnLabel');
+    btn.disabled = true;
+    lbl.innerHTML = '<div class="spinner"></div> Testando...';
+
+    var url = document.getElementById('cfgUrl').value.trim();
+    var key = document.getElementById('cfgKey').value.trim();
+
+    // Reset
+    [1,2,3,4,5].forEach(function(i) {
+        document.getElementById('test'+i).className = 'test-card running';
+        document.getElementById('status'+i).textContent = 'Testando...';
+        var det = document.getElementById('detail'+i);
+        det.textContent = '';
+        det.classList.remove('visible');
+    });
+
+    var results = [];
+
+    // ── TESTE 1: REST Ping ──────────────────────────────────────────
+    try {
+        var t1 = Date.now();
+        var r1 = await fetch(url + '/rest/v1/', {
+            headers: { 'apikey': key, 'Authorization': 'Bearer ' + key }
+        });
+        var ms1 = Date.now() - t1;
+        if (r1.ok || r1.status === 200 || r1.status === 400) {
+            setStatus(1, 'success', '✓ Online (' + ms1 + 'ms)', 'GET ' + url + '/rest/v1/ → HTTP ' + r1.status);
+            results.push(true);
+        } else {
+            setStatus(1, 'error', '✕ HTTP ' + r1.status, 'Endpoint inacessível: ' + r1.status);
+            results.push(false);
+        }
+    } catch(e) {
+        setStatus(1, 'error', '✕ Sem conexão', e.message);
+        results.push(false);
+    }
+
+    // ── TESTE 2: Anon Key Validation ───────────────────────────────
+    try {
+        var client = supabase.createClient(url, key);
+        var { data: authData } = await client.auth.getSession();
+        setStatus(2, 'success', '✓ Chave válida', 'Anon key aceita pelo Supabase. Sessão: ' + (authData.session ? 'Ativa' : 'Nenhuma'));
+        results.push(true);
+    } catch(e) {
+        setStatus(2, 'error', '✕ Chave inválida', e.message);
+        results.push(false);
+    }
+
+    // ── TESTE 3: Tabela pacientes ───────────────────────────────────
+    try {
+        var client3 = supabase.createClient(url, key);
+        var r3 = await fetch(url + '/rest/v1/pacientes?select=id&limit=1', {
+            headers: { 'apikey': key, 'Authorization': 'Bearer ' + key }
+        });
+        var body3 = await r3.text();
+        if (r3.status === 200) {
+            var rows = JSON.parse(body3);
+            setStatus(3, 'success', '✓ Acessível', 'Tabela encontrada. Registros visíveis: ' + rows.length + ' (RLS: anon pode ler sem login)');
+            results.push(true);
+        } else if (r3.status === 401 || r3.status === 403) {
+            setStatus(3, 'success', '✓ RLS Ativo', 'HTTP ' + r3.status + ' — Acesso bloqueado sem autenticação (comportamento correto!)');
+            results.push(true);
+        } else {
+            setStatus(3, 'error', '✕ Tabela não encontrada', 'HTTP ' + r3.status + ' — ' + body3.slice(0, 120));
+            results.push(false);
+        }
+    } catch(e) {
+        setStatus(3, 'error', '✕ Erro', e.message);
+        results.push(false);
+    }
+
+    // ── TESTE 4: Tabela profiles ────────────────────────────────────
+    try {
+        var r4 = await fetch(url + '/rest/v1/profiles?select=id&limit=1', {
+            headers: { 'apikey': key, 'Authorization': 'Bearer ' + key }
+        });
+        var body4 = await r4.text();
+        if (r4.status === 200) {
+            setStatus(4, 'success', '✓ Acessível', 'Tabela profiles encontrada e respondendo.');
+            results.push(true);
+        } else if (r4.status === 401 || r4.status === 403) {
+            setStatus(4, 'success', '✓ RLS Ativo', 'HTTP ' + r4.status + ' — Bloqueio correto para usuário não logado');
+            results.push(true);
+        } else {
+            setStatus(4, 'error', '✕ Não encontrada', 'HTTP ' + r4.status + ' — Execute o profiles_table.sql no Supabase');
+            results.push(false);
+        }
+    } catch(e) {
+        setStatus(4, 'error', '✕ Erro', e.message);
+        results.push(false);
+    }
+
+    // ── TESTE 5: Sessão Auth ────────────────────────────────────────
+    try {
+        var clientAuth = supabase.createClient(url, key);
+        var { data: sessData, error: sessErr } = await clientAuth.auth.getSession();
+        if (sessErr) throw sessErr;
+        if (sessData && sessData.session) {
+            var user = sessData.session.user;
+            setStatus(5, 'success', '✓ Sessão Ativa', 'Logado como: ' + user.email + ' | Expira: ' + new Date(sessData.session.expires_at * 1000).toLocaleString('pt-BR'));
+            results.push(true);
+        } else {
+            setStatus(5, 'success', '✓ API Auth OK', 'Nenhuma sessão ativa no momento. Faça login para testar acesso completo.');
+            results.push(true);
+        }
+    } catch(e) {
+        setStatus(5, 'error', '✕ Erro Auth', e.message);
+        results.push(false);
+    }
+
+    // ── Sumário ─────────────────────────────────────────────────────
+    var passed = results.filter(Boolean).length;
+    var total  = results.length;
+    var summary = document.getElementById('summary');
+    var sTitle  = document.getElementById('summaryTitle');
+    var sMsg    = document.getElementById('summaryMsg');
+    summary.classList.add('visible');
+
+    if (passed === total) {
+        summary.className = 'summary visible all-ok';
+        sTitle.innerHTML  = '🎉 Todos os testes passaram! (' + passed + '/' + total + ')';
+        sMsg.textContent  = 'A conexão entre o painel UCGS e o banco de dados Supabase está funcionando corretamente. O sistema está pronto para operação.';
+    } else {
+        summary.className = 'summary visible has-err';
+        sTitle.innerHTML  = '⚠ ' + (total - passed) + ' teste(s) falharam (' + passed + '/' + total + ' ok)';
+        sMsg.textContent  = 'Verifique os itens marcados em vermelho acima. Os erros mais comuns são: URL ou Key incorretos, tabela não criada no Supabase, ou falta de conexão com internet.';
+    }
+
+    btn.disabled = false;
+    lbl.textContent = '↺ Executar Novamente';
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>UCGS — Inspetor de Schema</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', monospace, sans-serif; background: #0B1120; color: #E2E8F0; padding: 32px 20px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1 { color: #60C4FF; font-size: 22px; margin-bottom: 6px; }
+        p.sub { color: #64748B; font-size: 13px; margin-bottom: 28px; }
+        .btn { padding: 12px 28px; background: linear-gradient(135deg,#1B6EF5,#0D50BF); color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; margin-bottom: 28px; }
+        .btn:disabled { opacity: 0.5; }
+        .section { margin-bottom: 32px; }
+        .section h2 { font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase; color: #94A3B8; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #1E293B; }
+        table { width: 100%; border-collapse: collapse; background: #111827; border-radius: 10px; overflow: hidden; }
+        th { background: #1E293B; color: #94A3B8; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; padding: 10px 14px; text-align: left; }
+        td { padding: 10px 14px; font-size: 13px; border-bottom: 1px solid #1E293B; color: #CBD5E0; }
+        tr:last-child td { border-bottom: none; }
+        td.ok { color: #10B981; }
+        td.warn { color: #F59E0B; }
+        td.err { color: #EF4444; }
+        .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+        .tag-green { background: #022C22; color: #10B981; }
+        .tag-red   { background: #2D0F10; color: #EF4444; }
+        .tag-blue  { background: #0C1B44; color: #60C4FF; }
+        .tag-yellow{ background: #2D1A03; color: #F59E0B; }
+        #log { background: #111827; border: 1px solid #1E293B; border-radius: 10px; padding: 16px; font-size: 12px; color: #64748B; min-height: 48px; font-family: monospace; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🔍 Inspetor de Schema — UCGS</h1>
+    <p class="sub">Analisa todas as tabelas do schema public no Supabase em tempo real</p>
+
+    <button class="btn" id="runBtn" onclick="inspectSchema()">▶ Inspecionar Schema Completo</button>
+
+    <div id="log">Clique no botão acima para iniciar a inspeção...</div>
+    <br>
+    <div id="results"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://llqphjlpypnyvknpfdyn.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxscXBoamxweXBueXZrbnBmZHluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1MzM0MjksImV4cCI6MjA5MjEwOTQyOX0.h_ycCGtWgnzB5CtM-dXv1BlUt-iIN0RxyuGnAJBkbow';
+
+// Known tables to probe (anon key can't query information_schema directly)
+const KNOWN_TABLES = [
+    'pacientes','evolucoes','profiles',
+    'mapa_risco','protocolos','metas','indicadores',
+    'eventos','atendimentos','agendamentos','prescricoes',
+    'exames','laudos','internacoes','altas',
+    'fisioterapia','odontologia','psicologia',
+    'triagem','sinais_vitais','alergias','medicamentos',
+    'setores','leitos','equipamentos','manutencao',
+    'usuarios','permissoes','logs_acesso','notificacoes',
+    'relatorios','indicadores_qualidade','metas_qualidade'
+];
+
+function log(msg) {
+    document.getElementById('log').innerHTML += '<br>' + msg;
+}
+
+function html(content) {
+    document.getElementById('results').innerHTML += content;
+}
+
+async function probeTable(client, name) {
+    try {
+        const r = await fetch(`${SUPABASE_URL}/rest/v1/${name}?select=*&limit=1`, {
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+        });
+        const body = await r.text();
+        if (r.status === 200) {
+            const data = JSON.parse(body);
+            const cols = data.length > 0 ? Object.keys(data[0]) : [];
+            return { exists: true, status: r.status, rows: data.length, cols, rls: 'aberta (anon pode ler)', rlsTag: 'warn' };
+        } else if (r.status === 401 || r.status === 403) {
+            const err = JSON.parse(body);
+            return { exists: true, status: r.status, rows: '—', cols: [], rls: 'RLS ativa (bloqueado sem login)', rlsTag: 'ok' };
+        } else if (r.status === 404 || (body.includes('relation') && body.includes('does not exist'))) {
+            return { exists: false };
+        } else {
+            return { exists: true, status: r.status, rows: '?', cols: [], rls: `HTTP ${r.status}`, rlsTag: 'warn' };
+        }
+    } catch(e) {
+        return { exists: false };
+    }
+}
+
+async function inspectSchema() {
+    const btn = document.getElementById('runBtn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Inspecionando...';
+    document.getElementById('log').innerHTML = '🔍 Iniciando inspeção de ' + KNOWN_TABLES.length + ' tabelas candidatas...';
+    document.getElementById('results').innerHTML = '';
+
+    const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const { data: sess } = await client.auth.getSession();
+    const loggedIn = !!(sess && sess.session);
+    log(`👤 Sessão: ${loggedIn ? '✓ Autenticado como ' + sess.session.user.email : '✗ Sem sessão (anon)'}`);
+
+    const found = [];
+    const notFound = [];
+
+    for (const tbl of KNOWN_TABLES) {
+        log(`Verificando: ${tbl}...`);
+        const result = await probeTable(client, tbl);
+        if (result.exists) {
+            found.push({ name: tbl, ...result });
+        } else {
+            notFound.push(tbl);
+        }
+    }
+
+    log(`\n✅ ${found.length} tabela(s) encontrada(s) | ❌ ${notFound.length} não existem`);
+
+    // Render found tables
+    if (found.length > 0) {
+        let rows = found.map(t => {
+            const colList = t.cols.length > 0 ? t.cols.map(c => `<span class="tag tag-blue">${c}</span>`).join(' ') : '(sem dados visíveis)';
+            const rlsClass = t.rlsTag === 'ok' ? 'tag-green' : 'tag-yellow';
+            return `<tr>
+                <td><strong>${t.name}</strong></td>
+                <td class="ok">✅ Existe</td>
+                <td>${t.rows}</td>
+                <td><span class="tag ${rlsClass}">${t.rls}</span></td>
+                <td style="font-size:11px">${colList}</td>
+            </tr>`;
+        }).join('');
+
+        html(`
+        <div class="section">
+            <h2>📋 Tabelas Encontradas no Schema Public (${found.length})</h2>
+            <table>
+                <thead><tr>
+                    <th>Tabela</th><th>Status</th><th>Registros visíveis</th><th>Segurança RLS</th><th>Colunas detectadas</th>
+                </tr></thead>
+                <tbody>${rows}</tbody>
+            </table>
+        </div>`);
+    }
+
+    // Render not found
+    if (notFound.length > 0) {
+        const cells = notFound.map(n => `<span class="tag tag-red">❌ ${n}</span> `).join('');
+        html(`
+        <div class="section">
+            <h2>⚠️ Tabelas Candidatas Não Encontradas (${notFound.length})</h2>
+            <div style="background:#111827;padding:16px;border-radius:10px;line-height:2.2">${cells}</div>
+        </div>`);
+    }
+
+    // Security analysis
+    const rlsOpen = found.filter(t => t.rlsTag !== 'ok');
+    if (rlsOpen.length > 0) {
+        const warn = rlsOpen.map(t => `<tr><td>${t.name}</td><td class="warn">⚠️ Leitura anônima permitida</td><td>Revisar políticas RLS</td></tr>`).join('');
+        html(`
+        <div class="section">
+            <h2>🔒 Alertas de Segurança</h2>
+            <table>
+                <thead><tr><th>Tabela</th><th>Problema</th><th>Ação</th></tr></thead>
+                <tbody>${warn}</tbody>
+            </table>
+        </div>`);
+    }
+
+    btn.disabled = false;
+    btn.textContent = '↺ Inspecionar Novamente';
+}
+</script>
+</body>
+</html>

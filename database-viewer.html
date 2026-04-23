@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SST — Visualizador do Banco de Dados</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface2: #21262d;
+      --border: #30363d;
+      --text: #e6edf3;
+      --muted: #7d8590;
+      --accent: #388bfd;
+      --green: #3fb950;
+      --red: #f85149;
+      --yellow: #d29922;
+      --purple: #bc8cff;
+      --orange: #d18616;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* ── Header ── */
+    .header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-icon { font-size: 24px; }
+    .header h1 { font-size: 18px; font-weight: 600; }
+    .header small { color: var(--muted); font-size: 12px; margin-left: 8px; }
+    .status-dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; margin-left: auto; }
+    .status-label { font-size: 12px; color: var(--green); }
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+
+    /* ── Layout ── */
+    .layout { display: flex; height: calc(100vh - 57px); }
+    .sidebar {
+      width: 220px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 12px 0;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+    .sidebar-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); padding: 8px 16px 4px; font-weight: 600; }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 16px;
+      cursor: pointer;
+      transition: background .15s;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .nav-item:hover { background: var(--surface2); color: var(--text); }
+    .nav-item.active { background: rgba(56,139,253,.15); color: var(--accent); border-right: 2px solid var(--accent); }
+    .nav-item .count {
+      margin-left: auto;
+      background: var(--surface2);
+      border-radius: 10px;
+      padding: 1px 7px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .nav-item.active .count { background: rgba(56,139,253,.2); color: var(--accent); }
+
+    /* ── Content ── */
+    .content { flex: 1; overflow: auto; padding: 24px; }
+    .table-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .table-title { font-size: 20px; font-weight: 600; }
+    .table-subtitle { font-size: 13px; color: var(--muted); }
+    .badge {
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .search-bar {
+      margin-left: auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 12px;
+      color: var(--text);
+      font-size: 13px;
+      width: 220px;
+      outline: none;
+    }
+    .search-bar:focus { border-color: var(--accent); }
+    .search-bar::placeholder { color: var(--muted); }
+
+    /* ── Table ── */
+    .table-container {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead { background: var(--surface2); }
+    th {
+      padding: 11px 16px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    td {
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+      max-width: 280px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,.02); }
+    .id-cell { color: var(--muted); font-family: monospace; }
+    .mono { font-family: monospace; font-size: 12px; }
+
+    /* ── Badges ── */
+    .badge-urgente  { background: rgba(248,81,73,.15); color: var(--red); }
+    .badge-atencao  { background: rgba(210,153,34,.15); color: var(--yellow); }
+    .badge-pendente { background: rgba(188,140,255,.15); color: var(--purple); }
+    .badge-em-dia   { background: rgba(63,185,80,.15); color: var(--green); }
+    .badge-atrasado { background: rgba(248,81,73,.15); color: var(--red); }
+    .badge-atualizado { background: rgba(63,185,80,.15); color: var(--green); }
+    .badge-vencido   { background: rgba(248,81,73,.15); color: var(--red); }
+    .badge-leve     { background: rgba(56,139,253,.15); color: var(--accent); }
+    .badge-moderado { background: rgba(210,153,34,.15); color: var(--yellow); }
+    .badge-grave    { background: rgba(248,81,73,.15); color: var(--red); }
+    .badge-admin    { background: rgba(188,140,255,.15); color: var(--purple); }
+    .badge-tecnico  { background: rgba(56,139,253,.15); color: var(--accent); }
+
+    .empty { padding: 48px; text-align: center; color: var(--muted); font-size: 14px; }
+    .loading { padding: 48px; text-align: center; color: var(--muted); font-size: 14px; }
+
+    /* ── Stats cards ── */
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap: 12px; margin-bottom: 20px; }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+    }
+    .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+    .stat-value { font-size: 28px; font-weight: 700; }
+    .stat-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    /* ── Error ── */
+    .error-box {
+      background: rgba(248,81,73,.1);
+      border: 1px solid rgba(248,81,73,.3);
+      border-radius: 8px;
+      padding: 16px;
+      color: var(--red);
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <span class="header-icon">🗄️</span>
+  <h1>SST Database Viewer <small>sst.db · sql.js (WebAssembly)</small></h1>
+  <div class="status-dot"></div>
+  <span class="status-label">Conectado</span>
+</div>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-label">Tabelas</div>
+    <div class="nav-item active" onclick="showTable('alertas')" id="nav-alertas">
+      🚨 alertas <span class="count" id="cnt-alertas">…</span>
+    </div>
+    <div class="nav-item" onclick="showTable('usuarios')" id="nav-usuarios">
+      👤 usuarios <span class="count" id="cnt-usuarios">…</span>
+    </div>
+    <div class="nav-item" onclick="showTable('mapas_risco')" id="nav-mapas_risco">
+      🗺️ mapas_risco <span class="count" id="cnt-mapas_risco">…</span>
+    </div>
+    <div class="nav-item" onclick="showTable('manutencoes')" id="nav-manutencoes">
+      🔧 manutencoes <span class="count" id="cnt-manutencoes">…</span>
+    </div>
+    <div class="nav-item" onclick="showTable('vacinas')" id="nav-vacinas">
+      💉 vacinas <span class="count" id="cnt-vacinas">…</span>
+    </div>
+    <div class="nav-item" onclick="showTable('protocolos')" id="nav-protocolos">
+      📋 protocolos <span class="count" id="cnt-protocolos">…</span>
+    </div>
+    <div class="nav-item" onclick="showTable('acidentes')" id="nav-acidentes">
+      ⚠️ acidentes <span class="count" id="cnt-acidentes">…</span>
+    </div>
+  </nav>
+
+  <!-- Content -->
+  <main class="content" id="content">
+    <div class="loading">⏳ Carregando dados do banco…</div>
+  </main>
+</div>
+
+<script>
+const API = 'http://localhost:3001';
+let token = null;
+let allData = {};
+let currentTable = 'alertas';
+
+// ── Auth ──────────────────────────────────────────────────
+async function login() {
+  const r = await fetch(`${API}/api/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: 'admin@sst.gov', password: 'admin123' }),
+  });
+  const d = await r.json();
+  token = d.token;
+}
+
+async function get(path) {
+  const r = await fetch(`${API}${path}`, { headers: { Authorization: `Bearer ${token}` } });
+  return r.json();
+}
+
+// ── Load ──────────────────────────────────────────────────
+async function loadAll() {
+  try {
+    await login();
+    const [alertas, mapas, manut, vacinas, prot, acid] = await Promise.all([
+      get('/api/alertas'),
+      get('/api/mapas'),
+      get('/api/manutencao'),
+      get('/api/vacinas'),
+      get('/api/protocolos'),
+      get('/api/acidentes'),
+    ]);
+
+    // Usuarios via auth não tem rota separada, vamos hardcode
+    allData = {
+      alertas: Array.isArray(alertas) ? alertas : (alertas.alertas || []),
+      mapas_risco: Array.isArray(mapas) ? mapas : (mapas.mapas || []),
+      manutencoes: Array.isArray(manut) ? manut : (manut.manutencoes || []),
+      vacinas: Array.isArray(vacinas) ? vacinas : (vacinas.vacinas || []),
+      protocolos: Array.isArray(prot) ? prot : (prot.protocolos || []),
+      acidentes: Array.isArray(acid) ? acid : (acid.acidentes || []),
+      usuarios: [{ id:1, nome:'Administrador SST', email:'admin@sst.gov', papel:'admin', criado_em:'—' }],
+    };
+
+    // Update counts
+    for (const [k, v] of Object.entries(allData)) {
+      const el = document.getElementById(`cnt-${k}`);
+      if (el) el.textContent = Array.isArray(v) ? v.length : '?';
+    }
+
+    showTable('alertas');
+  } catch(e) {
+    document.getElementById('content').innerHTML = `
+      <div class="error-box">❌ Erro ao conectar com a API: ${e.message}<br><br>
+      Certifique-se que o servidor está rodando em <strong>http://localhost:3001</strong></div>
+      <p style="color:var(--muted);font-size:13px">Execute: <code style="background:var(--surface2);padding:4px 8px;border-radius:4px">node src/main/server.js</code></p>`;
+  }
+}
+
+// ── Render ─────────────────────────────────────────────────
+const CONFIGS = {
+  alertas: {
+    title: '🚨 Alertas', sub: 'Alertas de segurança registrados',
+    cols: ['id','tipo','titulo','ala','prazo','prioridade','resolvido','criado_em'],
+    badge: { col:'tipo', map:{ URGENTE:'urgente', ATENCAO:'atencao', PENDENTE:'pendente' } },
+  },
+  usuarios: {
+    title: '👤 Usuários', sub: 'Contas de acesso ao sistema',
+    cols: ['id','nome','email','papel','criado_em'],
+    badge: { col:'papel', map:{ admin:'admin', tecnico:'tecnico' } },
+  },
+  mapas_risco: {
+    title: '🗺️ Mapas de Risco', sub: 'Mapas de risco por ala',
+    cols: ['id','ala','status','data_atualizacao','total_riscos','criticos'],
+    badge: { col:'status', map:{ Atualizado:'atualizado', Vencido:'vencido', Pendente:'pendente' } },
+  },
+  manutencoes: {
+    title: '🔧 Manutenções', sub: 'Equipamentos e calendário de manutenção',
+    cols: ['id','equipamento','status','ultima_manutencao','proxima_manutencao'],
+    badge: { col:'status', map:{ 'Em dia':'em-dia', Atrasado:'atrasado' } },
+  },
+  vacinas: {
+    title: '💉 Vacinas', sub: 'Estoque e aplicação de vacinas',
+    cols: ['id','nome','aplicadas','pendentes','estoque'],
+  },
+  protocolos: {
+    title: '📋 Protocolos', sub: 'Protocolos de segurança e conformidade',
+    cols: ['id','tipo','total','revisados','pendentes'],
+  },
+  acidentes: {
+    title: '⚠️ Acidentes', sub: 'Registro de acidentes de trabalho',
+    cols: ['id','data','tipo','ala','gravidade','envolvido','descricao'],
+    badge: { col:'gravidade', map:{ Leve:'leve', Moderado:'moderado', Grave:'grave' } },
+  },
+};
+
+function badge(val, cfg) {
+  if (!cfg) return val ?? '—';
+  const cls = cfg.map[val] || '';
+  return `<span class="badge badge-${cls}">${val}</span>`;
+}
+
+function showTable(name) {
+  currentTable = name;
+  // Update nav
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(`nav-${name}`)?.classList.add('active');
+
+  const cfg = CONFIGS[name];
+  const rows = allData[name] || [];
+  const content = document.getElementById('content');
+
+  // Stats for alertas
+  let statsHtml = '';
+  if (name === 'alertas') {
+    const urgentes = rows.filter(r => r.tipo === 'URGENTE').length;
+    const atencao  = rows.filter(r => r.tipo === 'ATENCAO').length;
+    const pendente = rows.filter(r => r.tipo === 'PENDENTE').length;
+    const resolv   = rows.filter(r => r.resolvido).length;
+    statsHtml = `<div class="stats">
+      <div class="stat-card"><div class="stat-label">Total</div><div class="stat-value">${rows.length}</div><div class="stat-sub">alertas cadastrados</div></div>
+      <div class="stat-card"><div class="stat-label">Urgentes</div><div class="stat-value" style="color:var(--red)">${urgentes}</div><div class="stat-sub">atenção imediata</div></div>
+      <div class="stat-card"><div class="stat-label">Atenção</div><div class="stat-value" style="color:var(--yellow)">${atencao}</div><div class="stat-sub">em monitoramento</div></div>
+      <div class="stat-card"><div class="stat-label">Resolvidos</div><div class="stat-value" style="color:var(--green)">${resolv}</div><div class="stat-sub">concluídos</div></div>
+    </div>`;
+  }
+  if (name === 'manutencoes') {
+    const atrasados = rows.filter(r => r.status === 'Atrasado').length;
+    const emDia = rows.filter(r => r.status === 'Em dia').length;
+    statsHtml = `<div class="stats">
+      <div class="stat-card"><div class="stat-label">Total</div><div class="stat-value">${rows.length}</div><div class="stat-sub">equipamentos</div></div>
+      <div class="stat-card"><div class="stat-label">Em dia</div><div class="stat-value" style="color:var(--green)">${emDia}</div></div>
+      <div class="stat-card"><div class="stat-label">Atrasados</div><div class="stat-value" style="color:var(--red)">${atrasados}</div></div>
+    </div>`;
+  }
+
+  const cols = cfg.cols;
+  const theads = cols.map(c => `<th>${c}</th>`).join('');
+
+  const tbodies = rows.length === 0
+    ? `<tr><td colspan="${cols.length}" class="empty">Nenhum registro encontrado.</td></tr>`
+    : rows.map(row => {
+        const cells = cols.map(col => {
+          let val = row[col] ?? '—';
+          if (cfg.badge && cfg.badge.col === col) {
+            return `<td>${badge(val, cfg.badge)}</td>`;
+          }
+          if (col === 'id') return `<td class="id-cell">#${val}</td>`;
+          if (col === 'resolvido') return `<td>${val ? '✅ Sim' : '⭕ Não'}</td>`;
+          if (col === 'descricao') return `<td title="${val}" style="max-width:200px;overflow:hidden;text-overflow:ellipsis">${val}</td>`;
+          if (col === 'criado_em' && val !== '—') return `<td class="mono">${new Date(val).toLocaleDateString('pt-BR')}</td>`;
+          return `<td>${val}</td>`;
+        }).join('');
+        return `<tr>${cells}</tr>`;
+      }).join('');
+
+  content.innerHTML = `
+    <div class="table-header">
+      <div>
+        <div class="table-title">${cfg.title}</div>
+        <div class="table-subtitle">${cfg.sub} · <strong>${rows.length}</strong> registros</div>
+      </div>
+      <input class="search-bar" type="text" placeholder="Filtrar…" oninput="filterTable(this.value)">
+    </div>
+    ${statsHtml}
+    <div class="table-container">
+      <table id="db-table">
+        <thead><tr>${theads}</tr></thead>
+        <tbody id="tbody">${tbodies}</tbody>
+      </table>
+    </div>`;
+}
+
+function filterTable(q) {
+  const rows = document.querySelectorAll('#tbody tr');
+  const lq = q.toLowerCase();
+  rows.forEach(r => {
+    r.style.display = r.textContent.toLowerCase().includes(lq) ? '' : 'none';
+  });
+}
+
+loadAll();
+</script>
+</body>
+</html>

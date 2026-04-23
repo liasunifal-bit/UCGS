@@ -1,0 +1,5 @@
+Line 14489: <h2 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 16px; color: var(--text-primary);">⚠️ Ações Pendentes</h2>
+Line 14951: <span class="stat-label">Vacinas Pendentes</span>
+Line 17240: <div class="am-gauge-stat"><span class="am-gauge-stat-val" style="color:#F59E0B;">19</span><span class="am-gauge-stat-lbl">Pendentes</span></div>
+Line 17651: <span class="hist-summary-label">Pendentes / Em Revisão</span>
+Line 17673: <button class="hist-filter-pill" data-hist-filter="pendente" onclick="histSetFilter(this)">Pendentes</button>

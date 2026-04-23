@@ -1,0 +1,21 @@
+Line 21072: if (btn) { btn.disabled = true; btn.textContent = '� � Salvando...'; }
+Line 24606: <h3>� Objetivo Geral</h3>
+Line 29435: * UCGS � Supabase Client
+Line 29436: * M�dulo de integra��o entre o frontend e o Supabase via REST API.
+Line 29447: // CONFIGURA��O � Seus dados do projeto Supabase
+Line 29455: // GERENCIAMENTO DE SESS�O (Token JWT)
+Line 29505: // M�DULO DE AUTENTICA��O
+Line 29527: /** Cadastro de novo usu�rio */
+Line 29563: /** Retorna o usu�rio logado ou null */
+Line 29573: /** Verifica se est� logado */
+Line 29580: // QUERY BUILDER � Padr�o fluente para opera��es CRUD
+Line 29627: /** Filtro: valor est� na lista */
+Line 29633: /** Ordena��o */
+Line 29662: // ---- OPERA��ES ----
+Line 29664: /** GET � Buscar registros */
+Line 29677: /** POST � Inserir registro */
+Line 29695: /** PATCH � Atualizar registro (REQUER filtro!) */
+Line 29698: throw new Error('SEGURAN�A: PATCH sem filtro � proibido. Use .eq("id", valor) antes de .update()');
+Line 29718: /** DELETE � Remover registro (REQUER filtro!) */
+Line 29721: throw new Error('SEGURAN�A: DELETE sem filtro � proibido. Use .eq("id", valor) antes de .delete()');
+Line 29742: // API P�BLICA

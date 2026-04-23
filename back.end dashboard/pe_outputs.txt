@@ -1,0 +1,64 @@
+16303: <div class="pe-stat-num" id="peStatDiagLauncher">3</div>
+16310: <div class="pe-stat-num" id="peStatNocLauncher">2</div>
+16317: <div class="pe-stat-num" id="peStatNicLauncher">3</div>
+16324: <div class="pe-stat-num" id="peStatEvolLauncher">3</div>
+16355: <div style="display:none" id="pePanelsAnchor">
+16357: <div class="pe-panel" id="pePanel1">
+16358: <div class="pe-risk-indicator" id="peRiskIndicator1">
+16378: <input class="pe-input" id="peNome" type="text" placeholder="Nome do trabalhador/paciente" value="JoÃ£o Paulo Mendes">
+16379: <span class="pe-field-error" id="peNomeErr">Campo obrigatÃ³rio</span>
+16402: <input class="pe-input" id="peDataAtend" type="date" value="2026-03-25">
+16410: <input class="pe-input" id="peEnfermeiro" type="text" placeholder="Nome do enfermeiro(a)" value="Enf. Ana Carolina Souza">
+16411: <span class="pe-field-error" id="peEnfermeiroErr">Campo obrigatÃ³rio</span>
+16434: <textarea class="pe-input pe-textarea" id="peQueixa" placeholder="Descreva a queixa principal...">Picada de agulha durante descarte de material contaminado. Refere dor local e ansiedade relacionada ao risco de contaminaÃ§Ã£o biolÃ³gica.</textarea>
+16435: <span class="pe-field-error" id="peQueixaErr">Campo obrigatÃ³rio</span>
+16472: <input class="pe-vital-input" id="pePA" type="text" value="128/84" oninput="peCheckVital(this,'pa')">
+16474: <div class="pe-vital-status warning" id="pePA-status"></div>
+16478: <input class="pe-vital-input" id="peFC" type="number" value="96" min="40" max="200" oninput="peCheckVital(this,'fc')">
+16480: <div class="pe-vital-status normal" id="peFC-status"></div>
+16484: <input class="pe-vital-input" id="peFR" type="number" value="18" min="8" max="40" oninput="peCheckVital(this,'fr')">
+16486: <div class="pe-vital-status normal" id="peFR-status"></div>
+16490: <input class="pe-vital-input" id="peTemp" type="number" step="0.1" value="36.8" oninput="peCheckVital(this,'temp')">
+16492: <div class="pe-vital-status normal" id="peTemp-status"></div>
+16496: <input class="pe-vital-input" id="peSpo2" type="number" value="99" min="50" max="100" oninput="peCheckVital(this,'spo2')">
+16498: <div class="pe-vital-status normal" id="peSpo2-status"></div>
+16502: <input class="pe-vital-input" id="peDorVal" type="text" value="3/10" readonly>
+16504: <div class="pe-vital-status normal" id="peDor-status"></div>
+16511: <input type="range" class="pe-pain-slider" id="pePainSlider" min="0" max="10" value="3" oninput="peUpdatePain(this.value)">
+16512: <span class="pe-pain-value" id="pePainDisplay">3</span>
+16550: <div class="pe-panel active" id="pePanel2">
+16576: <div class="pe-diag-grid" id="peDiagGrid">
+16641: <input class="pe-input" id="peCustomCode" type="text" placeholder="Ex: NANDA 00001">
+16645: <input class="pe-input" id="peCustomName" type="text" placeholder="DescriÃ§Ã£o do diagnÃ³stico">
+16649: <input class="pe-input" id="peCustomDesc" type="text" placeholder="ExplicaÃ§Ã£o clÃ­nica do diagnÃ³stico">
+16653: <select class="pe-select" id="peCustomCat">
+16677: <div class="pe-panel" id="pePanel3">
+16714: <select class="pe-select" id="pePlanDiagSelect" onchange="peUpdatePlan(this)">
+16742: <div id="peNocList">
+16782: <div id="peNicList">
+16842: <div class="pe-panel" id="pePanel4">
+16856: <input class="pe-input" type="date" id="peEvolDate" value="2026-03-25">
+16860: <input class="pe-input" type="time" id="peEvolTime" value="09:45">
+16864: <input class="pe-input" type="text" id="peEvolAuthor" value="Enf. Ana Carolina Souza">
+16868: <select class="pe-select" id="peEvolType">
+16884: <textarea class="pe-textarea" id="peEvolText" style="min-height:110px;" placeholder="S â€” Subjetivo: &#10;O â€” Objetivo: &#10;A â€” AvaliaÃ§Ã£o: &#10;P â€” Plano:"></textarea>
+16885: <span class="pe-field-error" id="peEvolTextErr">O texto da evoluÃ§Ã£o Ã© obrigatÃ³rio</span>
+16889: <select class="pe-select" id="peEvolDiag">
+16898: <input class="pe-input" type="text" id="peEvolTags" placeholder="Ex: profilaxia, sorologia, PEP">
+16916: <select class="pe-select" id="peEvolFilter" onchange="peFilterEvol()" style="font-size:0.78rem;padding:6px 10px;min-width:160px;">
+16927: <div class="pe-timeline" id="peTimeline">
+20306: <div id="peFullscreenBackdrop">
+20307: <div id="peFullscreenModal">
+20320: <span class="pefs-header-badge active-record" id="pefsRecordBadge">â— Registro Ativo</span>
+20329: <div class="pefs-sidebar-overlay" id="pefsSidebarOverlay" onclick="pefsToggleSidebar()"></div>
+20332: <div class="pefs-sidebar" id="pefsSidebar">
+20337: <span id="pefsPatientName">JoÃ£o Paulo Mendes</span>
+20342: <strong>Atendimento:</strong> <span id="pefsDate">25/03/2026</span>
+20407: <div class="pefs-stat-micro-num" id="peStatDiag">3</div>
+20411: <div class="pefs-stat-micro-num" id="peStatNoc">2</div>
+20415: <div class="pefs-stat-micro-num" id="peStatNic">3</div>
+20419: <div class="pefs-stat-micro-num" id="peStatEvol">3</div>
+20426: <div class="pefs-main" id="pefsMainContent">
+20436: <span id="pefsFooterStep">Etapa 2 de 4 â€” DiagnÃ³sticos</span>
+20439: <button class="pe-btn-secondary" id="pefsFooterPrev" onclick="peGoStep(peCurrentStep - 1)" style="font-size:0.8rem;padding:7px 14px;">â† Anterior</button>
+20440: <button class="pe-btn-primary" id="pefsFooterNext" onclick="peGoStep(peCurrentStep + 1)" style="font-size:0.8rem;padding:7px 14px;">PrÃ³ximo â†’</button>

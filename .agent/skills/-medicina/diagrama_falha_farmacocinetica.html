@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mecanismo - Falha Terapêutica</title>
+<style>
+  :root {
+    --bg-page: #eef7f2;
+    --text-main: #1f3b2b;
+    --box-purple-bg: #f2eefa;
+    --box-purple-border: #534ab7;
+    --box-orange-bg: #fdf2e3;
+    --box-orange-border: #d48e3a;
+    --box-pink-bg: #fcebeb;
+    --box-pink-border: #d65a5a;
+    --box-green-bg: #e4f3eb;
+    --box-green-border: #2e8b57;
+    --arrow-color: #557b6d;
+  }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-page);
+    color: var(--text-main);
+    margin: 0;
+    padding: 30px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .container {
+    max-width: 900px;
+    width: 100%;
+  }
+
+  .header-meta {
+    font-size: 13px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    color: #4a6c5f;
+  }
+
+  .title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 30px;
+    color: var(--text-main);
+  }
+
+  .svg-container {
+    width: 100%;
+    margin-bottom: 30px;
+    overflow: visible;
+  }
+
+  .description-box {
+    background-color: transparent;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #2c4a3b;
+    border-top: none;
+  }
+
+  /* Tooltip styles */
+  .tooltip {
+    position: absolute;
+    background: rgba(25, 45, 35, 0.95);
+    color: white;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    max-width: 250px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    transform: translateY(10px);
+    z-index: 100;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    line-height: 1.4;
+  }
+  
+  .tooltip.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Interactive SVG elements */
+  .node {
+    cursor: pointer;
+    transition: filter 0.2s;
+  }
+  .node:hover {
+    filter: brightness(0.95);
+  }
+  .node rect {
+    transition: stroke-width 0.2s;
+  }
+  .node:hover rect {
+    stroke-width: 2px;
+  }
+
+  /* Navigation */
+  .controls {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+  }
+  .btn {
+    background: white;
+    border: 1px solid var(--arrow-color);
+    color: var(--text-main);
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  .btn:hover {
+    background: var(--arrow-color);
+    color: white;
+  }
+  .slide {
+    display: none;
+    animation: fadeIn 0.4s ease;
+  }
+  .slide.active {
+    display: block;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="controls">
+    <button class="btn" onclick="prevSlide()">Anterior</button>
+    <button class="btn" onclick="nextSlide()">Próximo</button>
+  </div>
+
+  <!-- Slide 1 -->
+  <div class="slide active" id="slide-1">
+    <div class="header-meta">1 DE 4</div>
+    <div class="title">Administração Oral e Rejeição Gástrica</div>
+    
+    <div class="svg-container">
+      <svg width="100%" viewBox="0 0 800 250">
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0 1L8 5L0 9" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+
+        <!-- Lines -->
+        <path d="M 230 125 L 320 125" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#arrow)"/>
+        <path d="M 530 125 L 590 125" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#arrow)"/>
+        <path d="M 430 75 L 430 40 L 590 40" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#arrow)"/>
+
+        <!-- Node 1 -->
+        <g class="node" data-tooltip="A ingestão de comprimidos (Escopolamina, Dipirona) requer trânsito livre pelo estômago para alcançar o local de absorção no intestino.">
+          <rect x="30" y="90" width="200" height="70" rx="8" fill="var(--box-purple-bg)" stroke="var(--box-purple-border)" stroke-width="1"/>
+          <text x="130" y="115" font-family="sans-serif" font-size="16" font-weight="bold" fill="var(--box-purple-border)" text-anchor="middle">Medicação Oral</text>
+          <text x="130" y="135" font-family="sans-serif" font-size="13" fill="#666" text-anchor="middle">VO (Escopolamina)</text>
+        </g>
+
+        <!-- Node 2 -->
+        <g class="node" data-tooltip="A enterotoxina bacteriana ativa intensamente a zona do gatilho quimiorreceptora e as vias vagais aferentes, causando espasmo reverso.">
+          <rect x="330" y="75" width="200" height="100" rx="8" fill="var(--box-pink-bg)" stroke="var(--box-pink-border)" stroke-width="1"/>
+          <text x="430" y="105" font-family="sans-serif" font-size="16" font-weight="bold" fill="var(--box-pink-border)" text-anchor="middle">Estômago</text>
+          <text x="430" y="125" font-family="sans-serif" font-size="13" fill="#888" text-anchor="middle">Ação da enterotoxina</text>
+          <text x="430" y="145" font-family="sans-serif" font-size="13" fill="var(--box-pink-border)" text-anchor="middle">↓ Esvaziamento</text>
+        </g>
+
+        <!-- Node 3 -->
+        <g class="node" data-tooltip="O reflexo emético expele o conteúdo gástrico antes que o fármaco passe para o duodeno, zerando a biodisponibilidade.">
+          <rect x="600" y="10" width="180" height="60" rx="8" fill="var(--box-orange-bg)" stroke="var(--box-orange-border)" stroke-width="1"/>
+          <text x="690" y="35" font-family="sans-serif" font-size="15" font-weight="bold" fill="var(--box-orange-border)" text-anchor="middle">Vômitos em Jato</text>
+          <text x="690" y="55" font-family="sans-serif" font-size="12" fill="#888" text-anchor="middle">Perda do fármaco</text>
+        </g>
+
+        <!-- Node 4 -->
+        <g class="node" data-tooltip="O pouco que consegue passar encontra uma mucosa inflamada e com trânsito hiperacelerado.">
+          <rect x="600" y="95" width="180" height="60" rx="8" fill="var(--box-green-bg)" stroke="var(--box-green-border)" stroke-width="1"/>
+          <text x="690" y="120" font-family="sans-serif" font-size="15" font-weight="bold" fill="var(--box-green-border)" text-anchor="middle">Intestino Delgado</text>
+          <text x="690" y="140" font-family="sans-serif" font-size="12" fill="#888" text-anchor="middle">Baixa quantidade</text>
+        </g>
+
+      </svg>
+    </div>
+    <div class="description-box">
+      A tentativa de utilizar a via oral falha na primeira barreira: a gastroparesia e o reflexo emético (vômitos em jato) induzidos pela toxina. O medicamento é expulso fisicamente do corpo antes de ter a chance de chegar ao sítio primário de absorção (intestino delgado).
+    </div>
+  </div>
+
+  <!-- Slide 2 -->
+  <div class="slide" id="slide-2">
+    <div class="header-meta">2 DE 4</div>
+    <div class="title">Falha de Absorção no Intestino</div>
+    
+    <div class="svg-container">
+      <svg width="100%" viewBox="0 0 800 250">
+        <defs>
+          <marker id="arrow2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0 1L8 5L0 9" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+
+        <path d="M 230 125 L 300 80" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#arrow2)"/>
+        <path d="M 230 125 L 300 170" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#arrow2)"/>
+        <path d="M 510 80 L 590 125" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#arrow2)"/>
+        <path d="M 510 170 L 590 125" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#arrow2)"/>
+
+        <!-- Node 1 -->
+        <g class="node" data-tooltip="Mesmo a fração diminuta do remédio que escapa do estômago enfrenta um ambiente hostil no intestino delgado.">
+          <rect x="30" y="90" width="200" height="70" rx="8" fill="var(--box-purple-bg)" stroke="var(--box-purple-border)" stroke-width="1"/>
+          <text x="130" y="115" font-family="sans-serif" font-size="16" font-weight="bold" fill="var(--box-purple-border)" text-anchor="middle">Fração Gástrica</text>
+          <text x="130" y="135" font-family="sans-serif" font-size="13" fill="#666" text-anchor="middle">Remanescente VO</text>
+        </g>
+
+        <!-- Node 2 -->
+        <g class="node" data-tooltip="A diarreia gera um fluxo em alta velocidade, diminuindo o 'tempo de contato' necessário para que o fármaco atravesse a parede celular.">
+          <rect x="310" y="40" width="190" height="70" rx="8" fill="var(--box-orange-bg)" stroke="var(--box-orange-border)" stroke-width="1"/>
+          <text x="405" y="65" font-family="sans-serif" font-size="15" font-weight="bold" fill="var(--box-orange-border)" text-anchor="middle">Trânsito Acelerado</text>
+          <text x="405" y="85" font-family="sans-serif" font-size="12" fill="#888" text-anchor="middle">Lavado intestinal</text>
+        </g>
+
+        <!-- Node 3 -->
+        <g class="node" data-tooltip="A hipovolemia sistêmica faz o corpo desviar o sangue do intestino para órgãos nobres, reduzindo a perfusão capilar absortiva.">
+          <rect x="310" y="140" width="190" height="70" rx="8" fill="var(--box-pink-bg)" stroke="var(--box-pink-border)" stroke-width="1"/>
+          <text x="405" y="165" font-family="sans-serif" font-size="15" font-weight="bold" fill="var(--box-pink-border)" text-anchor="middle">Vasoconstrição Local</text>
+          <text x="405" y="185" font-family="sans-serif" font-size="12" fill="#888" text-anchor="middle">Isquemia esplâncnica leve</text>
+        </g>
+
+        <!-- Node 4 -->
+        <g class="node" data-tooltip="O resultado é uma absorção quase nula. O fármaco é excretado nas fezes líquidas sem entrar na corrente sanguínea.">
+          <rect x="600" y="90" width="180" height="70" rx="8" fill="var(--box-green-bg)" stroke="var(--box-green-border)" stroke-width="1"/>
+          <text x="690" y="115" font-family="sans-serif" font-size="15" font-weight="bold" fill="var(--box-green-border)" text-anchor="middle">Absorção Zerada</text>
+          <text x="690" y="135" font-family="sans-serif" font-size="12" fill="#888" text-anchor="middle">Biodisponibilidade nula</text>
+        </g>
+      </svg>
+    </div>
+    <div class="description-box">
+      A pequena parcela da medicação que chega ao intestino encontra um trânsito acelerado ("lavado") pela diarreia secretória e uma mucosa mal perfundida devido à desidratação (hipovolemia). Isso impossibilita a absorção do fármaco, que acaba sendo eliminado nas fezes.
+    </div>
+  </div>
+
+  <!-- Slide 3 -->
+  <div class="slide" id="slide-3">
+    <div class="header-meta">3 DE 4</div>
+    <div class="title">Manutenção da Cascata Inflamatória</div>
+    
+    <div class="svg-container">
+      <svg width="100%" viewBox="0 0 800 250">
+        <defs>
+          <marker id="arrow3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0 1L8 5L0 9" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+
+        <path d="M 230 125 L 300 80" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#arrow3)"/>
+        <path d="M 230 125 L 300 170" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#arrow3)"/>
+        <path d="M 510 80 L 590 125" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#arrow3)"/>
+        <path d="M 510 170 L 590 125" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#arrow3)"/>
+
+        <g class="node" data-tooltip="Sem a presença do fármaco bloqueador na corrente sanguínea, os receptores muscarínicos continuam livres.">
+          <rect x="30" y="90" width="200" height="70" rx="8" fill="var(--box-purple-bg)" stroke="var(--box-purple-border)" stroke-width="1"/>
+          <text x="130" y="115" font-family="sans-serif" font-size="16" font-weight="bold" fill="var(--box-purple-border)" text-anchor="middle">Receptores M3</text>
+          <text x="130" y="135" font-family="sans-serif" font-size="13" fill="#666" text-anchor="middle">Livres e Ativos</text>
+        </g>
+
+        <g class="node" data-tooltip="A neurotoxina bacteriana continua causando descarga de acetilcolina pelas terminações do plexo entérico.">
+          <rect x="310" y="40" width="190" height="70" rx="8" fill="var(--box-pink-bg)" stroke="var(--box-pink-border)" stroke-width="1"/>
+          <text x="405" y="65" font-family="sans-serif" font-size="15" font-weight="bold" fill="var(--box-pink-border)" text-anchor="middle">Ação da Toxina</text>
+          <text x="405" y="85" font-family="sans-serif" font-size="12" fill="#888" text-anchor="middle">Liberação contínua de ACh</text>
+        </g>
+
+        <g class="node" data-tooltip="O estímulo vagoal persistente para a área postrema do cérebro continua ordenando o esvaziamento reverso.">
+          <rect x="310" y="140" width="190" height="70" rx="8" fill="var(--box-orange-bg)" stroke="var(--box-orange-border)" stroke-width="1"/>
+          <text x="405" y="165" font-family="sans-serif" font-size="15" font-weight="bold" fill="var(--box-orange-border)" text-anchor="middle">Reflexo Vagal</text>
+          <text x="405" y="185" font-family="sans-serif" font-size="12" fill="#888" text-anchor="middle">Estímulo emético constante</text>
+        </g>
+
+        <g class="node" data-tooltip="Os sintomas clínicos persistem com intensidade, pois não houve oposição farmacológica.">
+          <rect x="600" y="90" width="180" height="70" rx="8" fill="var(--box-pink-bg)" stroke="var(--box-pink-border)" stroke-width="1"/>
+          <text x="690" y="115" font-family="sans-serif" font-size="15" font-weight="bold" fill="var(--box-pink-border)" text-anchor="middle">Sintomas Mantidos</text>
+          <text x="690" y="135" font-family="sans-serif" font-size="12" fill="#888" text-anchor="middle">Cólica e Náusea contínuas</text>
+        </g>
+      </svg>
+    </div>
+    <div class="description-box">
+      Como não há escopolamina nem antieméticos circulando no sangue, os receptores muscarínicos (M3) e eméticos (5-HT3) permanecem desprotegidos. A toxina estafilocócica mantém o estímulo inflamatório, perpetuando as cólicas dolorosas e as náuseas intensas.
+    </div>
+  </div>
+
+  <!-- Slide 4 -->
+  <div class="slide" id="slide-4">
+    <div class="header-meta">4 DE 4</div>
+    <div class="title">Solução: Mudança de Via (Intravenosa)</div>
+    
+    <div class="svg-container">
+      <svg width="100%" viewBox="0 0 800 250">
+        <defs>
+          <marker id="arrow4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0 1L8 5L0 9" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+
+        <path d="M 230 125 L 320 125" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#arrow4)"/>
+        <path d="M 530 125 L 590 125" fill="none" stroke="var(--arrow-color)" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#arrow4)"/>
+
+        <g class="node" data-tooltip="A via venosa pula todas as barreiras gástricas e entéricas. A droga é injetada direto na circulação sistêmica.">
+          <rect x="30" y="90" width="200" height="70" rx="8" fill="var(--box-green-bg)" stroke="var(--box-green-border)" stroke-width="1"/>
+          <text x="130" y="115" font-family="sans-serif" font-size="16" font-weight="bold" fill="var(--box-green-border)" text-anchor="middle">Administração Venosa</text>
+          <text x="130" y="135" font-family="sans-serif" font-size="13" fill="#666" text-anchor="middle">Acesso IV Periférico</text>
+        </g>
+
+        <g class="node" data-tooltip="A biodisponibilidade de um fármaco intravenoso é, por definição, de 100%. A ação é quase instantânea.">
+          <rect x="330" y="90" width="200" height="70" rx="8" fill="var(--box-purple-bg)" stroke="var(--box-purple-border)" stroke-width="1"/>
+          <text x="430" y="115" font-family="sans-serif" font-size="16" font-weight="bold" fill="var(--box-purple-border)" text-anchor="middle">Biodisponibilidade 100%</text>
+          <text x="430" y="135" font-family="sans-serif" font-size="13" fill="#666" text-anchor="middle">Ação Imediata no Receptor</text>
+        </g>
+
+        <g class="node" data-tooltip="Com os receptores bloqueados imediatamente pela droga, os espasmos e os vômitos param, e o paciente pode ser reidratado.">
+          <rect x="600" y="90" width="180" height="70" rx="8" fill="var(--box-green-bg)" stroke="var(--box-green-border)" stroke-width="1"/>
+          <text x="690" y="115" font-family="sans-serif" font-size="15" font-weight="bold" fill="var(--box-green-border)" text-anchor="middle">Resolução Sintomática</text>
+          <text x="690" y="135" font-family="sans-serif" font-size="12" fill="#888" text-anchor="middle">Controle da Doença</text>
+        </g>
+      </svg>
+    </div>
+    <div class="description-box">
+      Quando o Luiz retornou ao Pronto-Atendimento, a falha farmacocinética foi contornada pela <strong>mudança para a via Intravenosa (IV)</strong>. Essa via entrega 100% do medicamento direto no sangue, burlando a paralisia e rejeição gastrointestinal, o que proporciona bloqueio imediato dos receptores e alívio clínico.
+    </div>
+  </div>
+
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+  let currentSlide = 1;
+  const totalSlides = 4;
+
+  function updateSlides() {
+    for (let i = 1; i <= totalSlides; i++) {
+      const slide = document.getElementById('slide-' + i);
+      if (i === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    }
+  }
+
+  function nextSlide() {
+    currentSlide = currentSlide < totalSlides ? currentSlide + 1 : 1;
+    updateSlides();
+  }
+
+  function prevSlide() {
+    currentSlide = currentSlide > 1 ? currentSlide - 1 : totalSlides;
+    updateSlides();
+  }
+
+  // Tooltip Logic
+  const tooltip = document.getElementById('tooltip');
+  const nodes = document.querySelectorAll('.node');
+
+  nodes.forEach(node => {
+    node.addEventListener('mousemove', (e) => {
+      const text = node.getAttribute('data-tooltip');
+      if (text) {
+        tooltip.textContent = text;
+        tooltip.classList.add('show');
+        
+        // Position tooltip near cursor
+        let x = e.pageX + 15;
+        let y = e.pageY + 15;
+        
+        // Keep within viewport
+        const rect = tooltip.getBoundingClientRect();
+        if (x + rect.width > window.innerWidth) x = e.pageX - rect.width - 10;
+        
+        tooltip.style.left = x + 'px';
+        tooltip.style.top = y + 'px';
+      }
+    });
+
+    node.addEventListener('mouseleave', () => {
+      tooltip.classList.remove('show');
+    });
+  });
+</script>
+
+</body>
+</html>
